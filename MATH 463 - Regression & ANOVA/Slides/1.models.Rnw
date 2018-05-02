@@ -1,0 +1,130 @@
+\documentclass[handout]{beamer}
+\usepackage{txfonts}
+\usepackage[utf8]{inputenx} \input{ix-utf8enc.dfu}
+\usepackage{amsmath,pifont,amsfonts,amsthm,graphics,epsfig,verbatim}
+\usefonttheme{serif}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\inprob}{\stackrel{{\rm Pr}}{\longrightarrow}}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\title{Regression Models}
+\subtitle{Math 463, Spring 2017, University of Oregon}
+\author{David A. Levin}
+\date{April 3, 2017}
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}
+\begin{itemize}
+\item
+Previous set-up:  If $Y_i$ are i.i.d.\ $N(\mu,\sigma^2)$,
+one way to parameterize is
+\[
+Y_i = \mu + \ep_i
+\]
+where $\ep_i$ are i.i.d.\ $N(0,\sigma^2)$ random variables.
+
+\item Observe the values $Y_i = y_i$, cannot observe $\mu$ or
+$\ep_i$.   
+
+\item Want to reconstruct the \textbf{signal} $\mu$, which is obscured by the \textbf{noise} $\ep_i$.
+\item Observations are all under identical conditions with
+the same deterministic signal $\mu$ and independent noise
+$\ep_i$.
+\item \textbf{Combine} observations to recover $\mu$:
+  the estimator $\bar{y}$ is close to $\mu$ if $n$ is large.
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A simple simulation}
+<<fig=TRUE, include=false, label=sim>>=
+e = rnorm(40)
+y = 2 + e
+plot(1:40,y, pch=19)
+abline(a=2,b=0, col="blue", lty=2)
+@
+
+
+  \centerline{\includegraphics[width=2.5in]{models-sim}}
+
+\end{frame}
+\begin{frame}
+\frametitle{Data and Random Variables}
+\begin{itemize}
+\item \textbf{Data} is an array of \emph{numbers}.
+\item \textbf{Random Variables} are mechanisms for generating numbers.
+\item The \textbf{value} of a random variable is a number.
+\item Historically, the discipline of statistics has viewed data as
+  the \textbf{observed values} of random variables.
+\item Data have means (sample mean, $\bar{y}$); random variables have means/expected values, $\E(Y)$.  What is the connection?
+\item Law of Large Numbers: If the data are the observed values of random variables, then $\bar{Y} \inprob \E(Y)$, so
+$\bar{y} \approx E(Y)$.
+\item Data have sd's; random variables have sd's.  What is the connection?
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Bivariate data}
+
+The file at \url{http://pages.uoregon.edu/dlevin/DATA/fatherson.csv} contains father-son pairs, giving the heights for each pair.  
+
+The first few entries look like
+
+\begin{verbatim}
+fheight,sheight
+65.04851,59.77827
+63.25094,63.21404
+64.95532,63.34242
+65.7525,62.79238
+61.13723,64.28113
+63.02254,64.24221
+65.37053,64.08231
+64.72398,63.99574
+66.06509,64.61338
+66.96738,63.97944
+59.008,65.24451
+\end{verbatim}
+\end{frame}
+\begin{frame}
+
+\frametitle{Pearson's father-son height data}
+
+Histograms of variables, separately.
+<<fig=TRUE,echo=FALSE,include=FALSE,label=heights_s>>=
+heights = read.csv("http://pages.uoregon.edu/dlevin/DATA/fatherson.csv")
+hist(heights$sheight, probability =T,main="Histogram of Son's Heights")
+x = seq(60,80,0.2)
+y = dnorm(x,mean=mean(heights$sheight),sd=sd(heights$sheight))
+lines(x,y)
+@
+<<fig=TRUE,echo=FALSE,include=FALSE,label=heights_f>>=
+hist(heights$fheight, probability =T,main="Histogram of Father's Heights")
+x = seq(60,80,0.2)
+y = dnorm(x,mean=mean(heights$fheight),sd=sd(heights$fheight))
+lines(x,y)
+@
+\begin{center}
+\begin{tabular}{cc}
+  \includegraphics[width=2in]{models-heights_s}
+  &
+  \includegraphics[width=2in]{models-heights_f}
+\end{tabular}
+\end{center}
+Note the connection between the histogram (showing empiricial distribution) and the pdf (showing theoretical distribution of random variable)
+\end{frame}
+
+\begin{frame}
+\frametitle{Scatterplot of joint \emph{emperical} distribution}
+
+\centerline{\includegraphics[scale=0.5]{fatherson}}
+
+\end{frame}
+
+\end{document}
+

@@ -1,0 +1,172 @@
+%!TEX output_directory = temp
+\documentclass{amsart}
+	%% Basic Info
+		\author{Alex Thies}
+		\title{Homework 6 \\ Math 463 - Spring 2017}
+		\email{athies@uoregon.edu}
+	%% boilerplate packages
+		\usepackage{amsmath}
+		\usepackage{amssymb}
+		\usepackage{amsthm}
+		\usepackage{enumerate}
+		\usepackage{mathrsfs}
+		\usepackage{color}
+		\usepackage{hyperref}
+	%% rename the abstract
+		\renewcommand{\abstractname}{Introduction}
+	%% my shorthand
+	    % sets
+	    \DeclareMathOperator{\Z}{\mathbb{Z}}
+	    \DeclareMathOperator{\Zp}{\mathbb{Z^{+}}}
+        \DeclareMathOperator{\Zm}{\mathbb{Z^{-}}}
+        \DeclareMathOperator{\N}{\mathbb{Z^{+}}}
+	    % linear algebra stuff
+		\DeclareMathOperator{\Ell}{\mathscr{L}}
+		% stats stuff
+		\DeclareMathOperator{\var}{\rm Var}
+		\DeclareMathOperator{\sd}{\rm SD}
+		\DeclareMathOperator{\SE}{\rm SE}
+		% use pretty characters
+		\DeclareMathOperator{\ep}{\varepsilon}
+		\DeclareMathOperator{\ph}{\varphi}
+	%% Levin's shorthand
+		\newcommand{\E}{{\mathcal{E}}}
+		\newcommand{\A}{{\mathcal{A}}}
+		\newcommand{\B}{{\mathcal{B}}}
+		\newcommand{\R}{{\mathbb{R}}}
+		\newcommand{\X}{{\mathbf{X}}}
+		\newcommand{\x}{{\mathbf{x}}}
+		\newcommand{\M}{{\mathcal{M}}}
+		\newcommand{\bvec}[1]{{\boldsymbol #1}}
+		\newcommand{\bbeta}{\bvec{\beta}}
+		\newcommand{\bX}{\bvec{X}}
+		\newcommand{\bY}{\bvec{Y}}
+		\newcommand{\ssreg}{{\rm SS}_{{\rm Reg}}}
+		\newcommand{\ssr}{{\rm SS}_{{\rm Res}}}
+		\newcommand{\sst}{{\rm SS}_{{\rm Tot}}}
+\begin{document}
+	% \begin{abstract}
+	% 	I collaborated with Joel Bazzle, Torin Brown, Andy Heeszel, Ashley Ordway, and Seth Temple on this assignment.
+	% \end{abstract}
+
+	\maketitle
+
+	\section{Assignment} % (fold)
+	\label{sec:assignment}
+		\subsection{Problem 7.A.12} % (fold)
+		\label{sub:problem_7_a_12}
+			Suppose $X$, $Y$, $Z$ are independent normal random variables, each having variance 1. 
+			The means are $\alpha + \beta$, $\alpha + 2\beta$, $2\alpha + \beta$, respectively: $\alpha$, $\beta$ are parameters to be estimated. 
+			Show that maximum likelihood and OLS give the same estimates. 
+			Note: this won’t usually be true—the result depends on the normality assumption.
+		\begin{proof}[Solution]
+		\end{proof}
+		% subsection problem_7_a_12 (end)
+
+		\subsection{Problem 7.D.2} % (fold)
+		\label{sub:problem_7_d_2}
+			Conversely, if $U$ is uniform on $[0,1]$, show that $F^{-1}(U)$ has distribution function $F$.
+			(This idea is often used to simulate IID picks from $F$.)
+		\begin{proof}[Solution]
+		\end{proof}
+		% subsection problem_7_d_2 (end)
+
+		\subsection{Problem 7.D.7} % (fold)
+		\label{sub:problem_7_d_7}
+			\begin{enumerate}[(a)]
+				\item If $\mathbb{P}(Y_{i} = 1|X) = \Lambda(X_{i}\beta)$, show that logit $\mathbb{P}(Y_{i} = 1|X) = X_{i}\beta$.
+				\item If logit $\mathbb{P}(Y_{i} = 1|X) = X_{i}\beta$, show that $\mathbb{P}(Y_{i} = 1|X) = \Lambda(X_{i}\beta)$.
+			\end{enumerate}
+		\begin{proof}[Solution] \
+			\begin{enumerate}[(a)]
+				\item 
+				\item 
+			\end{enumerate}
+		\end{proof}
+		% subsection problem_7_d_7 (end)
+
+		\subsection{Problem 7.D.13} % (fold)
+		\label{sub:problem_7_d_13}
+			Show that the log likelihood for the probit model is concave, and strictly concave if $X$ has full rank. 
+			Hint: this is like exercise 11.
+		\begin{proof}[Solution]
+		\end{proof}
+		% subsection problem_7_d_13 (end)
+
+		\subsection{Problem 7.E.6} % (fold)
+		\label{sub:problem_7_e_6}
+			Student \# 77 is Presbyterian, went to public school, and graduated. 
+			What does this subject contribute to the likelihood function? 
+			Write your answer using $\ph$ in equation (15).
+		\begin{proof}[Solution]
+		\end{proof}
+		% subsection problem_7_e_6 (end)
+
+		\subsection{Problem 7.6} % (fold)
+		\label{sub:problem_7_6}
+			Powers and Rock (1999) consider a two-equation model for the effect of coaching on SAT scores:
+				\begin{align*}
+					X_{i} &= 1 \text{ if } \it U_{i}\alpha + \delta_{i} > 0\text{, else }X_{i} = 0 & \rm (assignment) \\
+					Y_{i} &= cX_{i} + V_{i}\beta + \sigma \ep_{i} & \rm (response)
+				\end{align*}
+			Here, $X_{i} = 1$ if subject $i$ is coached, else $X_{i} = 0$. 
+			The response variable $Y_{i}$ is subject $i$'s SAT score; $U_{i}$ and $V_{i}$ are vectors of personal characteristics for subject $i$, treated as data. 
+			The latent variables $(\delta_{i}, \ep_{i})$ are I.I.D. bivariate normal with mean 0, variance 1, and correlation $\rho$; they are independent of the $U$'s and $V$'s. 
+			(In this problem, $U$ and $V$ are observable, $\delta$ and $\ep$ are latent.)
+			\begin{enumerate}
+				\item Which parameter measures the effect of coaching? 
+				How would you estimate it?
+				\item State the assumptions carefully (including a response schedule, if one is needed). 
+				Do you find the assumptions plausible?
+				\item Why do Powers and Rock need two equations, and why do they need $\rho$?
+				\item Why can they assume that the disturbance terms have variance 1? 
+				Hint: look at sections 7.2 and 7.4.
+			\end{enumerate}
+		\begin{proof}[Solution] \
+			\begin{enumerate}[(a)]
+				\item
+				\item 
+				\item 
+				\item 
+			\end{enumerate}
+		\end{proof}
+		% subsection problem_7_6 (end)
+
+		\subsection{Problem 7.7} % (fold)
+		\label{sub:problem_7_7}
+			Shaw (1999) uses a regression model to study the effect of TV ads and candidate appearances on votes in the presidential elections of 1988, 1992, and 1996. 
+			With three elections and 51 states (DC counts for this purpose), there are 153 data points, i.e., pairs of years and states. 
+			Each variable in the model is determined at all 153 points. In a given year and state, the volume TV of television ads is measured in 100s of GRPs (gross rating points). 
+			Rep.TV , for example, is the volume of TV ads placed by the Republicans. 
+			AP is the number of campaign appearances by a presidential candidate. 
+			UN is the percent undecided according to tracking polls. 
+			PE is Perot’s support, also from tracking polls. 
+			(Ross Perot was a maverick candidate.) 
+			RS is the historical average Republican share of the vote. 
+			There is a dummy variable D1992, which is 1 in 1992 and 0 in the other years. 
+			There is another dummy D1996 for 1996. 
+			A regression equation is fitted by OLS, and the Republican share of the vote is
+			\begin{align*}
+				&\rm- 0.326 - 2.324\times D_{1992} - 5.001\times D_{1996} \\
+				&\rm + 0.430 \times (Rep. TV - Dem. TV ) + 0.766\times (Rep. AP - Dem. AP ) \\
+				&\rm + 0.066 \times (Rep. TV - Dem. TV ) \times (Rep. AP - Dem. AP ) \\
+				&\rm + 0.032 \times (Rep. TV - Dem. TV ) \times UN + 0.089 \times (Rep. AP - Dem. AP )\times UN \\
+				&\rm + 0.006 \times (Rep. TV - Dem. TV ) \times RS + 0.017 \times (Rep. AP - Dem. AP )\times RS \\
+				&\rm + 0.009 \times UN + 0.002 \times PE + 0.014 \times RS + error.
+			\end{align*}
+			\begin{enumerate}[(a)]
+				\item What are dummy variables, and why might D1992 be included in the equation?
+				\item According to the model, if the Republicans buy another 500 GRPs in a state, other things being equal, will that increase their share of the vote in that state by $0.430 \times 5 \stackrel{.}{=} 2.2$ percentage points?
+				Answer yes or no, and discuss briefly. 
+				(The $0.430$ is the coefficient of Rep. TV − Dem. TV in the second line of the equation.)
+			\end{enumerate}
+		\begin{proof}[Solution] \
+			\begin{enumerate}[(a)]
+				\item 
+				\item 
+				\item 
+			\end{enumerate}
+		\end{proof}
+		% subsection problem_7_7 (end)
+	% section assignment (end)
+\end{document}

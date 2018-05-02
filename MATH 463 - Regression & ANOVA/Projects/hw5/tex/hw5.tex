@@ -1,0 +1,282 @@
+%!TEX output_directory = temp
+\documentclass{amsart}
+	%% Basic Info
+		\author{Alex Thies}
+		\title{Homework 5 \\ Math 463 - Spring 2017}
+		\email{athies@uoregon.edu}
+	%% boilerplate packages
+		\usepackage{amsmath}
+		\usepackage{amssymb}
+		\usepackage{amsthm}
+		\usepackage{enumerate}
+		\usepackage{mathrsfs}
+		\usepackage{color}
+		\usepackage{hyperref}
+	%% rename the abstract
+		\renewcommand{\abstractname}{Introduction}
+	%% my shorthand
+	    % sets
+	    \DeclareMathOperator{\Z}{\mathbb{Z}}
+	    \DeclareMathOperator{\Zp}{\mathbb{Z^{+}}}
+        \DeclareMathOperator{\Zm}{\mathbb{Z^{-}}}
+        \DeclareMathOperator{\N}{\mathbb{Z^{+}}}
+	    % linear algebra stuff
+		\DeclareMathOperator{\Ell}{\mathscr{L}}
+		% stats stuff
+		\DeclareMathOperator{\var}{\rm Var}
+		\DeclareMathOperator{\sd}{\rm SD}
+		\DeclareMathOperator{\SE}{\rm SE}
+		% use pretty characters
+		\DeclareMathOperator{\ep}{\varepsilon}
+		\DeclareMathOperator{\ph}{\varphi}
+	%% Levin's shorthand
+		\newcommand{\E}{{\mathcal{E}}}
+		\newcommand{\A}{{\mathcal{A}}}
+		\newcommand{\B}{{\mathcal{B}}}
+		\newcommand{\R}{{\mathbb{R}}}
+		\newcommand{\X}{{\mathbf{X}}}
+		\newcommand{\x}{{\mathbf{x}}}
+		\newcommand{\M}{{\mathcal{M}}}
+		\newcommand{\bvec}[1]{{\boldsymbol #1}}
+		\newcommand{\bbeta}{\bvec{\beta}}
+		\newcommand{\bX}{\bvec{X}}
+		\newcommand{\bY}{\bvec{Y}}
+		\newcommand{\ssreg}{{\rm SS}_{{\rm Reg}}}
+		\newcommand{\ssr}{{\rm SS}_{{\rm Res}}}
+		\newcommand{\sst}{{\rm SS}_{{\rm Tot}}}
+\begin{document}
+	\begin{abstract}
+		I collaborated with Sienna Allen, Joel Bazzle, Torin Brown, Andy Heeszel, Ashley Ordway, and Seth Temple on this assignment.
+	\end{abstract}
+
+	\maketitle
+
+	\section{Assignment} % (fold)
+	\label{sec:assignment}
+		\subsection*{Problem 1} % (fold)
+		\label{sub:problem_1}
+			In this problem, you will replicate part of Blau and Duncan’s path model in figure 6.1 of Freedman (p. 82). 
+			Equation (6.3) explains son’s occupation in terms of father’s occupation, son’s education and son’s first job. 
+			Variables are standardized. 
+			Correlations are given in table 6.1
+			\begin{enumerate}[(a)]
+				\item Estimate the path coefficients in (6.3) and the standard deviation of the error term. 
+				How do your results compare with those in figure 6.1?
+				\item Compute SEs for the estimated path coefficients (Assume there are 20,000 subjects.)
+			\end{enumerate}
+			\begin{proof}[Solution] \
+				\begin{enumerate}[(a)]
+					\item We proceed by following the process outlined in the text for determining the path coefficients of (6.1), and the standard deviation of the error term.
+					In order to take advantage of the fact that the data is standardized\footnote{Thus, we can use the coorelation matrix rather than the dataset itself} we translate the given model $\bvec{Y} = e\bvec{U} + f\bvec{X} + g\bvec{W} + \eta$ into the language of linear algebra as follows, $$\bvec{Y} = \bvec{M} \begin{pmatrix} e \\ f \\ g \end{pmatrix} + \eta,$$
+					where $\bvec{M} = \begin{pmatrix}\bvec{U} & \bvec{X} & \bvec{W} \end{pmatrix}$.
+					Computing estimates for the coefficients boils down to solving the following equation $$\begin{pmatrix} \hat{e} \\ \hat{f} \\ \hat{g} \end{pmatrix} = (\bvec{M}'\bvec{M})^{-1}\bvec{M}'\bvec{Y}.$$
+					Let's compute the two pieces of the above equation, $\bvec{M}'\bvec{M}$, and $\bvec{M}'\bvec{Y}$.\footnote{We compute $\bvec{M}'\bvec{M}$ by hand and let R do the heavy-lifting of inverting it.} 
+					Note that $\rho(i,j)$ corresponds to the $(i,j)^{th}$ entry of the correlation matrix on page 83 of the text.
+						\begin{align*}
+							\bvec{M}'\bvec{M} &= \begin{pmatrix} \bvec{U} \\ \bvec{X} \\ \bvec{W} \end{pmatrix} \begin{pmatrix} \bvec{U} & \bvec{X} & \bvec{W} \end{pmatrix}, \\
+							&= \begin{pmatrix}
+								\langle \bvec{U},\bvec{U} \rangle & \langle \bvec{U},\bvec{X} \rangle & \langle \bvec{U},\bvec{W} \rangle \\
+								\langle \bvec{X},\bvec{U} \rangle & \langle \bvec{X},\bvec{X} \rangle & \langle \bvec{X},\bvec{W} \rangle \\
+								\langle \bvec{W},\bvec{U} \rangle & \langle \bvec{W},\bvec{X} \rangle & \langle \bvec{W},\bvec{W} \rangle
+							\end{pmatrix}, \\
+							&= \begin{pmatrix}
+								\sum_{i}\bvec{U_{i}}^{2} & \sum_{i}\bvec{U_{i}}\bvec{X_{i}} & \sum_{i}\bvec{U_{i}}\bvec{W_{i}} \\
+								\sum_{i}\bvec{X_{i}}\bvec{U_{i}} & \sum_{i}\bvec{X_{i}}^{2} & \sum_{i}\bvec{X_{i}}\bvec{W_{i}} \\
+								\sum_{i}\bvec{W_{i}}\bvec{U_{i}} & \sum_{i}\bvec{W_{i}}\bvec{X_{i}} & \sum_{i}\bvec{W_{i}}^{2} \\
+								\end{pmatrix}, \\
+								&= n \begin{pmatrix}
+									1 & \rho(\bvec{U},\bvec{X}) & \rho(\bvec{U},\bvec{W}) \\
+									\rho(\bvec{X},\bvec{U}) & 1 & \rho(\bvec{X},\bvec{W}) \\
+									\rho(\bvec{W},\bvec{U}) & \rho(\bvec{W},\bvec{X}) & 1
+								\end{pmatrix}, \\
+								&= n \begin{pmatrix}
+									1 & 0.438 & 0.538 \\
+									0.438 & 1 & 0.417 \\
+									0.538 & 0.417 & 1
+								\end{pmatrix}. \\
+								(\bvec{M}'\bvec{M})^{-1} &= \begin{pmatrix}
+									7.63 \times 10^{-5} & -1.97 \times 10^{-5} & -3.28 \times 10^{-5} \\
+									-1.97 \times 10^{-5} & 6.56 \times 10^{-5} & -1.68 \times 10^{-5} \\
+									-3.28 \times 10^{-5} & -1.68 \times 10^{-5} & 7.46 \times 10^{-5}
+								\end{pmatrix}.
+						\end{align*}
+						\begin{align*}
+							\bvec{M}'\bvec{Y} &= \begin{pmatrix}
+								\bvec{U}'\bvec{Y} \\ \bvec{X}'\bvec{Y} \\ \bvec{W}'\bvec{Y}
+							\end{pmatrix}, \\
+							&= \begin{pmatrix}
+								\sum_{i}^{n} \bvec{U}_{i}\bvec{Y}_{i} \\ \sum_{i}^{n} \bvec{X}_{i}\bvec{Y}_{i} \\ \sum_{i}^{n} \bvec{W}_{i}\bvec{Y}_{i}
+							\end{pmatrix}, \\
+							&= n \begin{pmatrix}
+								\rho(\bvec{U}, \bvec{Y}) \\ \rho(\bvec{X}, \bvec{Y}) \\ \rho(\bvec{W}, \bvec{Y})
+							\end{pmatrix}, \\
+							&= n \begin{pmatrix}
+								0.596 \\ 0.405 \\ 0.541
+							\end{pmatrix}.
+						\end{align*}
+						Hence, we compute the vector of estimated coefficients $\begin{pmatrix} \hat{e} & \hat{f} & \hat{g} \end{pmatrix}'$ by taking the product of the two pieces which we have just constructed,
+							\begin{align*}
+								\begin{pmatrix} \hat{e} \\ \hat{f} \\ \hat{g} \end{pmatrix} &= (\bvec{M}'\bvec{M})^{-1}\bvec{M}'\bvec{Y}, \\
+								&= \begin{pmatrix}
+									0.395 \\
+									0.115 \\
+									0.281
+								\end{pmatrix}.
+							\end{align*}
+						A quick glance at the path model on page 82 of the text shows us that our estimates agree with those computed by the authors of the study.
+
+						To compute the standard deviation of $\eta$ we again take advantage of the standardization of the data, in this case the fact that $n^{-1}\sum_{i} \bvec{Y}_{i}^{2} = 1$, allowing us to simply solve for $\hat{\sigma}^{2}$.
+						Recall that $\sum\bvec{U}_{i}^{2} = \sum\bvec{X}_{i}^{2} = \sum\bvec{W}_{i}^{2} = 1$, that $n^{-1}2\hat{e}\sum\bvec{U}_{i}\hat{\eta}_{i} = n^{-1}2\hat{f}\sum\bvec{X}_{i}\hat{\eta}_{i} = n^{-1}2\hat{g}\sum\bvec{W}_{i}\hat{\eta}_{i} = 0$, and that $n^{-1}\sum \bvec{U}_{i}\bvec{X}_{i} = \rho(\bvec{U},\bvec{X})$, $n^{-1}\sum \bvec{U}_{i}\bvec{W}_{i} = \rho(\bvec{U},\bvec{W})$ and $n^{-1}\sum \bvec{X}_{i}\bvec{W}_{i} = \rho(\bvec{X},\bvec{W})$.
+							\begin{align*}
+								1 &= \frac{\sum \bvec{Y}_{i}^{2}}{n}, \\
+								&= \frac{\sum\left( e \bvec{U}_{i} + f \bvec{X}_{i} + g \bvec{W}_{i} + \eta \right)^{2}}{n}, \\
+								&= n^{-1}\Big( \hat{e}^{2}\sum\bvec{U}_{i}^{2} + \hat{f}^{2}\sum\bvec{X}_{i}^{2} \\ 
+								&\hspace*{12pt} + \hat{g}^{2}\sum\bvec{W}_{i}^{2} + 2\hat{e}\hat{f}\sum\bvec{U}_{i}\bvec{X}_{i} \\
+								&\hspace*{12pt} + 2\hat{f}\hat{g}\sum\bvec{X}_{i}\bvec{W}_{i} + 2\hat{e}\hat{g}\sum\bvec{U}_{i}\bvec{W}_{i} \\
+								&\hspace*{12pt} + 2\hat{e}\sum\bvec{U}_{i}\hat{\eta}_{i} + 2\hat{f}\sum\bvec{X}_{i}\hat{\eta}_{i} + 2\hat{g}\sum\bvec{W}_{i}\hat{\eta}_{i} \Big), \\
+								&= \hat{e}^{2} + \hat{f}^{2} + \hat{g}^{2} + 2\hat{e}\hat{f}\rho(\bvec{U},\bvec{X})	\\
+								&\hspace*{12pt} + 2\hat{f}\hat{g}\rho(\bvec{X},\bvec{W}) + 2\hat{e}\hat{g}\rho(\bvec{U},\bvec{W}) + \hat{\sigma}^{2}.
+							\end{align*}
+						We solve for $\hat{\sigma}^{2}$.
+							\begin{align*}
+								\hat{\sigma}^{2} &= 1 - \hat{e}^{2} - \hat{f}^{2} - \hat{g}^{2} - 2\hat{e}\hat{f}\rho(\bvec{U},\bvec{X}) \\
+								&\hspace*{12pt} - 2\hat{f}\hat{g}\rho(\bvec{X},\bvec{W}) - 2\hat{e}\hat{g}\rho(\bvec{U},\bvec{W}), \\
+								&= 1 - 0.394^{2} - 0.115^{2} - 0.281^{2} \\
+								&\hspace*{12pt} - 2(0.394)(0.115)(0.438) \\
+								&\hspace*{12pt} - 2(0.115)(0.281)(0.417) \\
+								&\hspace*{12pt} - 2(0.394)(0.281)(0.538) \\
+								&= 0.753.
+							\end{align*}
+						\item Determining the standard errors for $\hat{e}$, $\hat{f}$, $\hat{g}$ can be done by the following computation which follows from Theorem 4.3 in \textit{Freedman}, $\mathbf{SE} = \sqrt{\hat{\sigma}^{2}n(\bvec{M}'\bvec{M})^{-1}}$, where the standard errors for the estimated coefficients are found along the diagonal.
+						Thus, we have the following standard errors,
+							\begin{align*}
+								SE_{\hat{e}} &= 6.57 \times 10^{-3}, \\
+								SE_{\hat{f}} &= 6.10 \times 10^{-3}, \\
+								SE_{\hat{g}} &= 6.50 \times 10^{-3}.
+							\end{align*}
+				\end{enumerate}
+			\end{proof}
+		% subsection problem_1 (end)
+		\subsection*{Problem 2} % (fold)
+		\label{sub:problem_2}
+			In this problem, you will replicate Gibson’s path diagram, which explains repression in terms of mass and elite tolerance (section 6.3 of Freedman). 
+			The correlation between mass and elite tolerance scores is 0.52; between mass tolerance scores and repression score, -0.26; between elite tolerance scores and repression scores, -0.42. (Tolerance scores were averaged within state.)
+			\begin{enumerate}[(a)]
+				\item Compute the path coefficients in figure 6.2, using the method of section 6.1.
+				\item Estimate $\sigma^{2}$. 
+				Gibson had repression scores for all the states. 
+				He had mass tolerance scores for 26 states and elite tolerance scores for 26 states this will underestimate the SEs, by a bit-but you neeed to decide if $p$ is 2 or 3.
+				\item Compute SEs for the estimates.
+				\item Compute the SE for the difference of the two path coefficients. 
+				You will neeed the off-diagonal element of the convariance matrix. 
+				Comment on the result.
+			\end{enumerate}
+			\begin{proof}[Solution] \
+				\begin{enumerate}[(a)]
+					\item We will attack this problem in much the same way as Problem 1, in this case we solve $\begin{pmatrix} \hat{a} & \hat{b} \end{pmatrix}' = (\bvec{N}'\bvec{N})^{-1}\bvec{N}'\bvec{R}$, where $\bvec{N} = \begin{pmatrix} \bvec{M} & \bvec{E} \end{pmatrix}$ and $\bvec{R} = a\bvec{M} + b\bvec{E}$. We compute the following,
+						\begin{align*}
+							\bvec{N}'\bvec{N} &= \begin{pmatrix} \bvec{M} \\ \bvec{E} \end{pmatrix} \begin{pmatrix} \bvec{M} & \bvec{E} \end{pmatrix}, \\
+							&= \begin{pmatrix}
+								\langle \bvec{M},\bvec{M} \rangle & \langle \bvec{M},\bvec{E} \rangle \\
+								\langle \bvec{E},\bvec{M} \rangle & \langle \bvec{E},\bvec{E} \rangle
+							\end{pmatrix}, \\
+							&= n \begin{pmatrix}
+								1 & \rho(\bvec{M},\bvec{E}) \\
+								\rho(\bvec{E},\bvec{M}) & 1
+							\end{pmatrix}, \\
+							&= n \begin{pmatrix}
+								1 & 0.52 \\
+								0.52 & 1
+							\end{pmatrix}. \\
+							(\bvec{N}'\bvec{N})^{-1} &= \begin{pmatrix}
+								0.053 & -0.027 \\
+								-0.027 & 0.053
+							\end{pmatrix}.
+						\end{align*}
+						\begin{align*}
+							\bvec{N}'\bvec{R} &= \begin{pmatrix}
+								\bvec{M}'\bvec{R} \\ \bvec{E}'\bvec{R}
+							\end{pmatrix}, \\
+							&= n \begin{pmatrix}
+								\rho(\bvec{M}, \bvec{R}) \\ \rho(\bvec{E}, \bvec{R})
+							\end{pmatrix}, \\
+							&= n \begin{pmatrix}
+								-0.26 \\ 0.42
+							\end{pmatrix}.
+						\end{align*}
+					Now we compute the estimated coefficient vector,
+						\begin{align*}
+							\begin{pmatrix} \hat{a} \\ \hat{b} \end{pmatrix} &= (\bvec{N}'\bvec{N})^{-1}\bvec{N}\bvec{R}, \\
+							&= \begin{pmatrix}
+								-0.057 \\ -0.39
+							\end{pmatrix}.
+						\end{align*}
+					\item We compute the standard deviation of the error term in the same manner as in Problem 1 with the additional step of multiplying by $n/n-p$ due to the small sample size.
+					As mentioned in \textit{Freedman}, $p = 3$ in this case because we are estimating things about the intercept `behind the scenes'.
+						\begin{align*}
+							\hat{\sigma}^{2} &= \left(1 - \hat{a}^{2} - \hat{b}^{2} - 2\hat{a}\hat{b}\rho(\bvec{E},\bvec{M})\right)(n/n-p), \\
+							&= \left(1 - (-0.057)^{2} - (-0.39)^{2} - 2(0.057)(0.39)(0.52)\right)(26/23), \\
+							&= 0.928.
+						\end{align*}
+					\item As might be expected, we proceed as we did for the corresponding task in Problem 1.
+						\begin{align*}
+							SE_{\hat{a}} &= 0.221, \\
+							SE_{\hat{b}} &= 0.221.
+						\end{align*}
+					\item To compute the standard error of the difference we compute the following
+						\begin{align*}
+						 	SE_{\hat{b}-\hat{a}} &= \sqrt{\var\left( \hat{b} \right) + \var\left( \hat{a} \right) + \rm Cov\left(\it \hat{a},\hat{b}\right)}, \\
+						 	&= \sqrt{0.0489 + 0.0489 + 2(-0.0254)}, \\
+						 	&= 0.2168.
+						 \end{align*} 
+				\end{enumerate}
+			\end{proof}
+		% subsection problem_2 (end)
+		\subsection*{Problem 3} % (fold)
+		\label{sub:problem_3}
+			Consider the regression equations
+				\begin{align}
+					Y_{i} &= a + bX_{i} + \delta_{i}, \\
+					W_{i} &= c + dX_{i} + eY_{i} + \ep_{i}
+				\end{align}
+				If $\ep_{i}$ and $\delta_{i}$ are correlated, are the OLS estimators of $(c, d, e)$ unbiased? 
+				If yes, show it, otherwise, provide a counterexample.
+			\begin{proof}[Solution]
+				We proceed via a counterexample. 
+				Suppose $a = b = 0$, and $\delta_{i}$ and $\ep_{i}$ are correlated such that $\delta_{i} = \gamma_{i}$, and $\ep_{i} = \gamma_{i} + \psi_{i}$.
+				Additionally, suppose $\gamma_{i}$, $\psi_{i}$ are I.I.D. and let $\bvec{A} = \begin{pmatrix} \bvec{1} & \bvec{X} & \bvec{Y} \end{pmatrix}$ so that $\hat{\beta} = (\bvec{A}'\bvec{A})^{-1}\bvec{A}'\bvec{W}$.
+				We compute the following,
+					\begin{align*}
+					\mathbb{E}\left[\hat{B}|A\right]&=\mathbb{E}\left[(\bvec{A}'\bvec{A})^{-1}\bvec{A}'\bvec{W}\right] \\
+					&= (\bvec{A}'\bvec{A})^{-1}\bvec{A}'\mathbb{E}\left[\bvec{W}\right] \\
+					&= (\bvec{A}'\bvec{A})^{-1}\bvec{A}'\mathbb{E}\left[\bvec{A}\beta + \ep_{i}\right] \\
+					&= (\bvec{A}'\bvec{A})^{-1}\bvec{A}'\mathbb{E}\left[\bvec{A}\beta\right] + (\bvec{A}'\bvec{A})^{-1}\bvec{A}'\mathbb{E}\left[\ep_{i}\right] \\
+					&= \beta + (\bvec{A}'\bvec{A})^{-1}\bvec{A}' \mathbb{E}\left[\ep_{i}\right]  \\
+					&= \beta + (\bvec{A}'\bvec{A})^{-1}\bvec{A}' \mathbb{E}\left[\gamma_{i} + \psi_{i}\right]
+					\end{align*}
+					Because $\gamma_{i}$ and $\psi_{i}$ are I.I.D. but not necessarily normal, $$\mathbb{E}\left[ \hat{B}|A \right] = \beta + (\bvec{A}'\bvec{A})^{-1} \bvec{A}'\mathbb{E}\left[\gamma_{i} + \psi_{i}\right] \neq \beta.$$ Thus, the OLS estimators are biased.
+			\end{proof}
+		% subsection problem_3 (end)
+		\subsection*{Problem 4} % (fold)
+		\label{sub:problem_4}
+			In the same set-up as problem 3, suppose that $(a,b,c,d,e) = (1, 2, 1, 3, 2)$, and that $(X_{i}, \delta_{i}, \ep_{i})$ is multivariate Normal with mean vector $(0, 0, 0)$ and covariance matrix $$\Sigma = \begin{bmatrix}
+				1 & 0 & 0 \\
+				0 & 1 & 0.5 \\
+				0 & 0.5 & 1
+			\end{bmatrix}$$
+			Simulate 1000 times $(X_{i}, Y_{i}, W_{i}, \delta_{i}, \ep_{i})$ according to the equations (1) in Problem 3.
+			Note: The \verb|R| package \verb|mvtnorm| is useful for generating from the multivariate Normal distribution. 
+			Alternatively find $\Sigma^{1/2}$ (e.g., using the spectral decomposition) and write $$(X_{i},\delta_{i},\ep_{i})' = \Sigma^{1/2} (Z_{i,1}, Z_{i,2}, Z_{i,3})',$$ where $(Z_{i,1}, Z_{i,2}, Z_{i,3})'$ are i.i.d. $N(0,1)$ random variables.
+			Estimate the bias of the OLS estimators using the simulated data. 
+			How accurate is your estimate?
+			\begin{proof}[Solution] We run the requested simulation in \verb|R| and determine that the bias for $\hat{c}$, $\hat{d}$, and $\hat{e}$ are $-0.503$, $-1.007$, and $0.503$, respectively.
+			To determine how accurate these estimates of the biases are we provide the following 95\% confidence intervals,
+				\begin{align*}
+					CI_{\hat{c}} &= (-0.507, -0.500), \\
+					CI_{\hat{d}} &= (-1.013, -1.000), \\
+					CI_{\hat{e}} &= (0.500, 0.506).
+				\end{align*}
+			\end{proof}
+		% subsection problem_4 (end)
+	% section assignment (end)
+\end{document}

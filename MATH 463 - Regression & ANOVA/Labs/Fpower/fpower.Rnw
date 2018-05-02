@@ -1,0 +1,214 @@
+\documentclass{amsart}
+\usepackage{enumerate,amssymb,graphicx,verbatim}
+\usepackage{fourier}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue,
+ citecolor=blue, urlcolor=red]{hyperref}
+
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\A}{{\mathcal A}}
+\newcommand{\B}{{\mathcal B}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\st}{\;:\;}
+\newcommand{\M}{{\mathcal M}}
+\newcommand{\var}{{\rm Var}}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\sd}{{\rm SD}}
+\newcommand{\bvec}[1]{{\boldsymbol #1}}
+\newcommand{\X}{\bvec{X}}
+\newcommand{\x}{\bvec{x}}
+\newcommand{\Y}{\bvec{Y}}
+\newcommand{\bbeta}{\bvec{\beta}}
+\newcommand{\Lin}{{\mathcal L}}
+\newcommand{\rss}{{\rm RSS}}
+
+
+\newenvironment{enumeratei}{\begin{enumerate}[\upshape (i)]}
+                           {\end{enumerate}}
+\newenvironment{enumeratea}{\begin{enumerate}[\upshape (a)]}
+                           {\end{enumerate}}
+
+\newenvironment{enumeraten}{\begin{enumerate}[\upshape 1.]}
+                           {\end{enumerate}}
+
+
+\newenvironment{Problem}[1]
+ {
+   \medskip
+   \noindent \textbf{\hypertarget{X:#1}{Problem #1.}}
+ }
+ {
+   %\hyperlink{Sol:#1}{Solution}
+ }
+
+\newenvironment{ProblemSol}[1]{
+  \begin{proof}[\hypertarget{Sol:#1}{Solution to Problem }\hyperlink{X:#1}{#1}]
+}
+{
+\end{proof}
+}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}
+\newtheorem{question}{Question}
+\newcommand{\LinkSol}[1]{                          %%
+\hfill \hyperlink{Sol:#1}{\framebox{Solution $\checkmark$}}}
+
+\title{Calculating Power of $F$-test}
+\begin{document}
+
+\maketitle
+
+
+\section{Some Theory}
+
+We have our usual linear model:
+\[
+\bvec{Y} = \X \bbeta + \bvec{\ep}
+\]
+where it is assumed that $\bvec{\ep}$ is independent of
+$\bvec{X}$ and $\bvec{\ep} \sim N(\bvec{0}, \sigma^2I)$.
+
+We want to consider testing
+\begin{equation} \label{Eq:Hy}
+H_0 : \beta_{r+1} = \cdots = \beta_k = 0 \,.
+\end{equation}
+Let
+\begin{align*}
+  V_0 & = \Lin(\x_1,\ldots,\x_r) \\
+  V_1 & = \Lin(\x_1,\ldots,\x_k) \,.
+\end{align*}
+and if $\widehat{\bvec{Y}^{(i)}} = \Pi_{V_i} \bvec{Y}$,
+then
+\[
+\rss_i = \sum_{j=1}^n (Y_j - \widehat{Y_j^{(i)}})^2
+= \| \bvec{Y} - \widehat{\bvec{Y}^{(i)}} \|^2 \,.
+\]
+We know that under $H_0$,
+\[
+F =
+\frac{\|\widehat{\bvec{Y}^{(0)}} - \widehat{\bvec{Y}^{(1)}}\|^2/(k-r)}{\|\bvec{Y}-\widehat{\bvec{Y}^{(1)}}\|^2/(n-k)}
+= \frac{(\rss_0 - \rss_1)/(k-r)}{\rss_1/(n-k)}
+\]
+has an $F$-distribution with $k-r,n-k$ degrees of freedom.
+
+To carry out this test in $R$, fit two models and use
+\verb|anova| to compute the $F$-statistic.  See
+Table \ref{Tab:F} for an example.
+
+<<results="asis">>=
+library(xtable)
+boston = read.table(url("http://pages.uoregon.edu/dlevin/DATA/BostonB.txt"),
+                    header=T)
+g1 = lm(medv~.,data=boston)
+g2 = lm(medv~.-age-indus,data=boston)
+xtable(anova(g2,g1),caption="F test on coefficients of age and industry",
+       label="Tab:F")
+@
+
+
+If we want to compute probabilities for $F$ without the
+assumption of $H_0$ (e.g., to compute the power), we need:
+
+\begin{theorem}
+  The distribution of $F$ is a \emph{non-central}
+  $F$-distribution with degrees of freedom $k-r$ and
+  $n-k$ and with \emph{non-centrality parameter}
+  \[
+  \delta = \frac{ \| \Pi_{V_1 \cap V_0^\perp} \bvec{\theta} \|^2}{\sigma^2} \,,
+  \]
+  where $\bvec{\theta} = \E[\bvec{Y}\mid \X]$.
+\end{theorem}
+
+Note that
+\[
+\Pi_{V_1 \cap V_0^\perp} \bvec{\theta}
+= \sum_{j=r+1}^k \beta_j (\x_j - \Pi_{V_0} \x_k)
+= \sum_{j=j+1}^k \beta_k \x_j^\perp,
+\]
+where $\x_j^\perp = \x_j - \Pi_{V_0} \x_k$.
+
+Thus,
+\[
+\delta =
+\frac{1}{\sigma^2}\left[\sum_{j=r+1}^k \beta_j^2 \| \x_j^\perp \|^2
+  + 2\sum_{r+1 \leq i < j \leq k} \beta_i\beta_j \langle \x_i^\perp, \x_j^\perp \rangle \right]\,.
+\]
+
+\begin{question}
+  The parameter $\delta$ is ``unitless'', i.e. it does not
+  depend on the units of any of the variables.  Why?
+\end{question}
+
+To calculate $\delta$, we need to calculate $\x_j^\perp$.
+There are several ways to do this.   Note that
+$\x_j^\perp$ is the vector of residuals when performing OLS
+of $\x_j$ against $\x_1, \ldots, \x_r$.  (Why?)
+
+Suppose $\beta_{{\rm indus}} = 0.05$ and
+$\beta_{{\rm age}} = 0.001$.  Let us find $\delta$:
+
+<<>>=
+ageperp = residuals(lm(age~.-medv-indus,data=boston))
+indusperp = residuals(lm(indus~.-medv-age,data=boston))
+de = (0.05^2*sum(ageperp^2) + 0.001^2*sum(indusperp^2)
+      + 2*0.001*0.05*sum(ageperp*indusperp))/summary(g1)$sigma^2
+@
+
+Now we find the cut-off for the $F$-test, say with significance level $0.05$:
+
+<<>>=
+fstar = qf(0.95,2,492)
+@
+
+To find the power:
+<<>>=
+1 - pf(fstar,2,492,ncp = de)
+@
+\begin{question}
+The design matrix $\bvec{X}$ is said to have
+\emph{collinearity} if there are \emph{near} linear relationships among the columns.  Why is the power of the $F$-test
+limited when the variables $\x_j$ for $j > r$ are nearly
+collinear with the variables $\x_j$ for $j \leq r$.
+\end{question}
+
+\section{An example}
+
+This example concerns the \verb|crime| dataset, available
+via
+<<>>=
+crime = read.table(url("http://pages.uoregon.edu/dlevin/DATA/crime.txt"),header=T)
+@
+A description of this data set is at
+
+\url{http://pages.uoregon.edu/dlevin/DATA/USCrimeDatafile.html}
+
+Here, the mortality rate \verb|R| is modelled as a function of the other variables.
+
+
+First, use OLS to fit a model including all the variables.
+
+\begin{question}
+Run a \verb|summary| of the OLS model.  Note the most of the coefficients are ``not significant''.
+Test the hypothesis that none of the ``not significant'' coefficients are non-zero.  What do you find?  Discuss.
+\end{question}¯
+
+\begin{question}
+In the first \verb|summary| of the full OLS model, the coeffiecients of \verb|Ex0| and \verb|Ex1| have different signs.
+Looking at the description of the variables, does this make sense?  How would you explain this?
+\end{question}
+\begin{question}
+  In the above question, running the \verb|summary| command performed several tests.  What were these tests?  Afterwards, the question asked you to perform another test, \emph{based on the results} given in \verb|summary|.  Does this matter in interpreting the results of the second test?
+\end{question}
+
+Now, consider the test that the
+coefficients of both \verb|Ex1| and \verb|U1| are zero.
+
+\begin{question}
+What is the power of this test when $\beta_{{\rm Ex1}} = -1$
+and $\beta_{{\rm U1}} = -1$.
+\end{question}
+First, carry out the $F$-test that these two coefficients are zero.
+
+
+\end{document}

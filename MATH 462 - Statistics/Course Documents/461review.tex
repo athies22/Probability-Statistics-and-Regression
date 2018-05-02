@@ -1,0 +1,415 @@
+\documentclass{amsproc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+
+\DeclareMathOperator{\bin}{\text{Binomial}}
+\DeclareMathOperator{\fish}{\text{Poisson}}
+\DeclareMathOperator{\bern}{\text{Bernoulli}}
+\DeclareMathOperator{\uni}{\text{Uniform}}
+\DeclareMathOperator{\norm}{\text{Normal}}
+\DeclareMathOperator{\Var}{\text{Var}}
+\DeclareMathOperator{\SD}{\text{SD}}
+\DeclareMathOperator{\Cov}{\text{Cov}}
+\DeclareMathOperator{\Corr}{\text{Corr}}
+
+\title{Review of Math 461 \\ An Introduction to Mathematical Methods of Probability}
+\author{Alex Thies}
+\address{Department of Mathematics, University of Oregon, Eugene, OR}
+\email{athies@uoregon.edu}
+
+\begin{document}
+	\begin{abstract}
+		The following is a brief review of the topics covered in Math 461 - An Introduction to Mathematical Methods of Probability, taught by Professor David Levin at the University of Oregon during the Fall Quarter of 2016.
+	\end{abstract}
+	\maketitle
+	\tableofcontents
+	\newpage
+
+	\section{Axioms of Probability}
+		\begin{enumerate}
+			\item \textbf{\textit{Axiom 1}} Let $E \subsetneq S$ be an event within the sample space $S$, \[0 \leq P(E) \leq 1\]
+
+			\item \textbf{\textit{Axiom 2}} Let $S$ be a sample space, \[P(S) = 1\]
+
+			\item \textbf{\textit{Axiom 3}} For any sequence of mutually exclusive events $E_{1}, E_{2}, \dots$ (that is, events for which $E_{i}E_{j} = \emptyset$ when $i \neq j$), \[P \left( \bigcup\limits_{i=1}^{\infty} E_{i} \right) = \sum\limits_{i=1}^{\infty} P\left( E_{i} \right)\] We refer to $P(E)$ as the probability of the event $E$.
+		\end{enumerate}
+
+	\section{Combinatorics}
+		\subsection{Counting}
+
+		\subsection{Permutations}
+			\begin{align*}
+				n! &= n(n-1)(n-2)\cdots(n-n+1)
+			\end{align*}
+
+			\subsubsection{Stirling's Approximation of $n!$}
+				\begin{align*}
+					n! &\sim \sqrt{2\pi} n^{n + 1/2} e^{-n}
+				\end{align*}
+
+		\subsection{Binomial Coefficients} Binomial coefficients describe the number of possible ways that we can choose $k$ objects from a group of $n$ objects. The classic example is the ways to pull colored objects from a container.
+			\begin{align*}
+				\binom{n}{k} &= \frac{n!}{(n-k)! \cdot k!}
+			\end{align*}
+
+		\subsection{Multinomial Coefficients}
+			\begin{align*}
+				\binom{n}{a_{1} \ a_{2} \ a_{3} \ \dots \ a_{k}} &= \frac{n!}{a_{1}! \cdot a_{2}! \cdot a_{3}! \ \cdots \ a_{k}!}
+			\end{align*}
+
+		\subsection{Conditional Probability}
+			\begin{align*}
+				P(A|B) &= \frac{P(AB)}{P(B)}, \\
+				P(AB) &= P(A|B)P(B)
+			\end{align*}
+
+	\section{Conditional Probability \& Independence}
+		\subsection{Bayes' Formula}
+			\begin{align*}
+				P(A) &= P(AB) + P(AB^{c}), \\
+				P(AB) &= P(AB)P(B) + P(AB^{c})P(B^{c}), \\
+				&= P(AB)P(B) + P(AB^{c})\left[ 1 - P(B) \right].
+			\end{align*}
+
+		\subsection{Inclusion-Exclusion Principle}
+			\[P\left(\bigcup\limits_{i=1}^{\infty} A_{i}\right) = \sum\limits_{i=1}^{\infty}P(A_{i}) - \sum\limits_{1 \leq i < j \leq \infty} P(A_{i}A_{j}) + \sum\limits_{1 \leq i < j < k \leq \infty} P(A_{i}A_{j}A_{k}) \pm \dots\]
+
+		\subsection{Independence}
+	
+	\section{Discrete Random Variables}
+		\subsection{General Principles}
+			Let $X$ be a discrete random variable, then
+			\begin{enumerate}
+				\item The Probability Mass Function (pmf) is a function which describes the probability that a random variable $X$ outputs a result $x$, i.e., $p_{X}(x) = P(X = x)$. The pmf for a random variable can be written in discrete terms, or formulaically,
+					\begin{enumerate}
+						\item Discrete number of terms,
+							\begin{align*}
+								p_{X}(x_{1}) &= p_{1}, \\
+								p_{X}(x_{2}) &= p_{2}, \\
+								&\vdots \\
+								p_{X}(x_{i}) &= p_{i}, \\
+								&\vdots \\
+								p_{X}(x_{n}) &= p_{n}. \\
+								p_{X}(x) &= 0\text{, for all other $x$.}
+							\end{align*}
+						The above equations, taken together, are a pmf for $X$. Note that $\sum_{i=1}^{n} P_{X}(x_{i}) = 1$, this comes from the Axioms of Probability.
+						
+						\item We can also express the pmf as a formula, generally speaking this is, $p_{X}(x) = f(x)$. The easiest (and most important) example is the pmf for a binomial distribution, that is, for $X \sim \bin(p)$, $$p_{X}(x) = \binom{n}{x}p^{x}(1-p)^{n-x}.$$ Note that $\sum_{i=1}^{n} p_{X}(x_{i}) = 1$.v
+					\end{enumerate}
+
+				\item The following function outputs the Expectation, or mean $\mu$ of a discrete random variable $X$,
+					\begin{align*}
+						E(X) &= \sum\limits_{x \in X} x p_{X}(x)
+					\end{align*}
+
+				If we want to compute the expecation of a function $f$ of $X$, we perform the following computation,
+					\begin{align*}
+						E\left( f(X) \right) &= \sum\limits_{f(x) \in f(X)} f(x) p_{X}(x)
+					\end{align*}
+				Note that the argument of the pmf is unchanged. For example,
+					\begin{align*}
+						E\left(X^{2}\right) &= \sum\limits_{x^{2} \in X^{2}} x^{2} \cdot p_{X}(x) \\
+						E\left(1/X\right) &= \sum\limits_{x^{-1} \in X^{-1}} \frac{1}{x} \cdot p_{X}(x)
+					\end{align*}
+
+				\item The Variance of a random variable is the expectation of the squared difference between the expectation and the result. The following function outputs the variance, $\sigma^{2}$, of a discrete random variable $X$,
+					\begin{align*}
+						\Var(X) &= E\left[\left(X - \mu\right)^{2}\right]\text{, or, more simply,} \\
+						\Var(X) &= E(X^{2}) - \left[E(X)\right]^{2}.
+					\end{align*}
+				The following are properties of the Variance,
+					\begin{align*}
+						\Var(aX + b) &= a^{2}\Var(X).
+					\end{align*}
+
+				\item The Standard Deviation of a random variable is the square root of the variance, i.e., $\SD(X) = \sqrt{\Var(X)} = \sqrt{\sigma^{2}} = \sigma$.
+			\end{enumerate}
+
+		\subsection{Specific Discrete Random Variables}
+			\subsubsection{Binomial} A binomial random variable $X$ has binary outputs, e.g., success or failure, with $p$ denoting the probability of success, and $(1-p)$ denoting the probability of failure, in $n$ trials; $n$ trials and probability of success $p$ are the parameters for $X$, hence, we write $X \sim \bin(n,p)$. The standard example for a binomial random variable is tossing a coin $n$ times, with the probability of the coin landing on heads being $p$.
+			\begin{enumerate}
+				\item Probability Mass Function. The pmf of $X \sim \bin(n,p)$ is \[p_{X}(x) = \binom{n}{x}p^{x}(1-p)^{n-x}\]
+				
+				\item Expectation. The expectation of a binomial random variable is the product of the number of trials and the probability of success, i.e., for $X \sim \bin(n,p)$, $E(X) = np$. Before we prove this, note that $$x\binom{n}{x} = n\binom{n-1}{x-1} = n\left( \frac{(n-1)!}{(n-x-1)!(x-1)!} \right).$$ We compute the following,
+					\begin{align*}
+						E(X^{k}) &= \sum\limits_{x^{k} \in X^{k}} x^{k} p_{X}(x), \\
+						&= \sum\limits_{x = 1}^{n} x^{k} \binom{n}{x} p^{x}(1-p)^{n-x}, \\
+						&= \sum\limits_{x = 1}^{n} nx^{k-1}\binom{n-1}{x-1} p^{x}(1-p)^{n-x}, \\
+						&= np \sum\limits_{x = 1}^{n} x^{k-1} \binom{n-1}{x-1} p^{x-1}(1-p)^{n-x}, \\
+						&= np \sum\limits_{x = 1}^{n} x^{k-1} \left(\frac{(n-1)!}{\left(n-(x-1)\right)!(x-1)!}\right) p^{x-1}(1-p)^{n-x}, \\
+						& \text{if we set $y = x -1$,} \\
+						&= np \sum\limits_{y = 0}^{n-1} (y + 1)^{k-1} \left( \frac{(n-1)!}{(n-y)!y!} \right) p^{y}(1-p)^{(n-1)-y}, \\
+						&= np \sum\limits_{y = 0}^{n-1} (y + 1)^{k-1} \binom{n-1}{y} p^{y}(1-p)^{(n-1)-y}, \\
+						&= np \cdot E\left[ (Y+1)^{k-1} \right]
+					\end{align*}
+				If we let $k=1$, then we see that for $X \sim \bin(n,p)$, $E(X) = np$.
+				
+				\item Variance. The variance for a binomial random variable is the product of the number of trials, the probability of success, and the probability of failure. Recall that $\Var(X) = E(X^{2}) - \left[ E(X) \right]^{2}$, thus we must compute $E(X^{2})$. From our previous computations we know that if we set $k=2$, then,
+					\begin{align*}
+						E(X^{2}) &= np \cdot E\left( Y+1 \right), \\
+						&= np\left[ (n-1)p + 1\right], \\
+						&= np (np - p + 1), \\
+						&= n^{2}p^{2} - np^{2} + np.
+					\end{align*}
+				We now compute the variance,
+					\begin{align*}
+						\Var(X) &= E(X^{2}) - \left[ E(X) \right]^{2}, \\
+						&= \left( n^{2}p^{2} - np^{2} + np \right) - \left( np \right)^{2}, \\
+						&= np - np^{2}, \\
+						&= np(1 - p).
+					\end{align*}
+
+				\item Standard Deviation. The standard deviation for a binomial random variable is as follows \[\SD(X) = \sqrt{np(1-p)}.\]
+			\end{enumerate}
+
+			\subsubsection{Bernoulli}
+			\begin{enumerate}
+				\item Probability Mass Function. A bernoulli random variable $X$ has binary outputs for 1 trial, e.g., success or failure, with $p$ denoting the probability of success, and $(1-p)$ denoting the probability of failure. Bernoulli random variables are the special case of a binomial random variable where $n=1$, e.g., $\bin(1,p) \sim X \sim \bern(p)$
+				
+				\item Expectation. The expectation of a bernoulli random variable is its probability $p$, i.e., $E(X) = p$. Note that $X \sim \bern(p) \Rightarrow X \sim \bin(1,p)$, thus 
+					\begin{align*}
+						E(X) &= np, \\
+						&= (1)p, \\
+						&= p.
+					\end{align*}
+				
+				\item Variance. The variance of a bernoulli random variable is its probability $p$, i.e., $\Var(X) = p$. This is verified from the variance of a binomial random variable with $n=1$, as we did for the expectation.
+
+				\item Standard Deviation. The standard deviation of a bernoulli random variable is the square root of its probability $p$, i.e., $\SD(X) = \sqrt{p}$.
+			\end{enumerate}
+
+			\subsubsection{Poisson} A poisson random variable BLAH. Importantly, a poisson random variable approximates a binomial random variable for large $n$ and small $p$; the product of these values, $ \lambda = np$, is the parameter for a poisson random variable, i.e., $X \sim \fish( \lambda )$.
+			\begin{enumerate}
+				\item Probability Mass Function. The pmf of $X \sim \fish(\lambda)$ is \[p_{X}(x) = \frac{e^{-\lambda} \lambda^{x}}{x!}\]
+				
+				\item Expectation. The expectation of a poisson random variable is its parameter $\lambda = np$, for $n$ trials and probability of success $p$. We compute the following,
+					\begin{align*}
+						E(X) &= \sum\limits_{x \in X} x p_{X}(x), \\
+						&= \sum\limits_{x=0}^{\infty} x \frac{e^{-\lambda} \lambda^{x}}{x!}, \\
+						&= \lambda \sum\limits_{x=1}^{\infty} \frac{e^{-\lambda} \lambda^{x-1}}{(x-1)!}, \\
+						&= \lambda \sum\limits_{y=1}^{\infty} \frac{e^{-\lambda} \lambda^{y}}{y!}.
+					\end{align*}
+				Note that $\frac{e^{-\lambda} \lambda^{y}}{y!}$ is the probability mass function for $Y \sim \fish(\lambda)$, thus, from the axioms of probability, the summation of the pmf over its domain is equal to 1, therefore $E(X) = \lambda$.
+				
+				\item Variance. The variance of a poisson random variable is its parameter $\lambda = np$. We compute the following,
+					\begin{align*}
+						\Var(X) &= E\left( X^{2} \right) - \left[ E(X) \right]^{2}, \\
+						&= \left( \sum\limits_{x=0}^{\infty} x^{2} \frac{e^{-\lambda} \lambda^{x}}{x!} \right) - \lambda^{2}, \\
+						&= \left( \lambda \sum\limits_{x=1}^{\infty} \frac{x e^{-\lambda} \lambda^{x-1}}{(x-1)!} \right) - \lambda^{2}, \\
+						&= \lambda \left( \sum\limits_{y=0}^{\infty} \frac{(y+1) e^{-\lambda} \lambda^{y}}{y!} \right) - \lambda^{2}, \\
+						&= \lambda \left( \sum\limits_{y=0}^{\infty} \frac{y e^{-\lambda} \lambda^{y}}{y!} + \sum\limits_{y=1}^{\infty} \frac{e^{-\lambda} \lambda^{y}}{y!} \right) - \lambda^{2}, \\
+						&= \lambda \left( \lambda + 1\right) - \lambda^{2}, \\
+						&= \lambda.
+					\end{align*}
+
+				\item Standard Deviation. The standard deviation for a poisson random variable is as follows \[\SD(X) = \sqrt{\lambda}.\]
+			\end{enumerate}
+
+	\section{Continuous Random Variables}
+		\subsection{General Principles}
+			\begin{enumerate}
+				\item Probability Density Function.
+				
+				\item Cumulative Distribution Function. The cumulative distribution function (cdf) is a function which outputs the probablity that the result of a continuous random variable $X$ is less than a fixed value of $x \in X$, i.e., $$F_{X}(x) = P(X \leq x) = \int_{-\infty}^{x} f_{X}(t) \ dt,$$ where $f_{X}$ is a pdf.
+
+				\item Relationship between the pdf and the cdf.
+
+				\item Expectation. The following function outputs the Expectation, or mean $\mu$ of a continous random variable $X$,
+					\begin{align*}
+						E(X) &= \int_{-\infty}^{\infty} x f_{X}(x).
+					\end{align*}
+				Note that this case is perfectly analagous to that of the discrete case, as an integral over the real line is equivalent to the summation over the domain of $X$.
+
+				If we want to compute the expecation of a function $g$ of $X$, we perform the following computation,
+					\begin{align*}
+						E\left( f(X) \right) &= \int_{-\infty}^{\infty} g(x) f_{X}(x)
+					\end{align*}
+				Note that the argument of the pmf is unchanged. For example,
+					\begin{align*}
+						E\left(X^{2}\right) &= \sum\limits_{x^{2} \in X^{2}} x^{2} \cdot p_{X}(x) \\
+						E\left(1/X\right) &= \sum\limits_{x^{-1} \in X^{-1}} \frac{1}{x} \cdot p_{X}(x)
+					\end{align*}
+				
+				\item Variance. The Variance of a continuous random variable is the same as that for the discrete case. The following function outputs the variance, $\sigma^{2}$, of a continuous random variable $X$,
+					\begin{align*}
+						\Var(X) &= E\left[\left(X - \mu\right)^{2}\right]\text{, or, more simply,} \\
+						\Var(X) &= E(X^{2}) - \left[E(X)\right]^{2}.
+					\end{align*}
+				
+				\item Standard Deviation. The Standard Deviation of a random variable is the square root of the variance, i.e., $\SD(X) = \sqrt{\Var(X)} = \sqrt{\sigma^{2}} = \sigma$.
+			\end{enumerate}
+
+		\subsection{Specific Continuous Random Variables}
+			\subsubsection{Normal}
+			\begin{enumerate}
+				\item Probability Density Function. The pdf for a normal random variable is \[f_{X}(x) = \frac{1}{\sqrt{2\pi\sigma^{2}}} e^{-(x-\mu)^{2}/2\sigma^{2}}\]
+
+				\item Cumulative Distribution Function. The cdf for a normal random variable is $\frac{1}{\sqrt{2\pi\sigma^{2}}}\int_{-\infty}^{x} e^{-(t-\mu)^{2}/2\sigma^{2}} \ dt$, note that this generalizes to the case $\int_{-\infty}^{x} e^{-t^{2}} \ dt$, for which there is no anti-derivative.
+
+				\item Expectation. \[E(X) = \mu\]
+
+				\item Variance. \[\Var(X) = \sigma^{2}\]
+
+				\item Standard Deviation. \[\SD(X) = \sigma\]
+			\end{enumerate}
+
+			\subsubsection{Standard Normal} The standard normal random variable is a normal random variable centered about $x=0$ with standard deviation 1, i.e., $X \sim \norm(0,1)$, $\mu = 0$, and $\sigma^{2} = 1$.
+			\begin{enumerate}
+				\item Probability Density Function. The pdf for a normal random variable is \[f_{X}(x) = \frac{e^{-x^{2}}}{\sqrt{2\pi}}\]
+
+				\item Cumulative Distribution Function. For a normal random variable with mean $\mu = 0$ and variance $\sigma^{2} = 1$, the cdf is tabled, and denoted by the $\Phi(x)$ function. Thus, $F_{X}(2) = P(X < 2) = \Phi(2)$.
+			\end{enumerate}
+
+			\subsubsection{Exponential}
+			\begin{enumerate}
+				\item Probability Density Function. 
+					\[
+						f_{X}(x) = \begin{cases} \lambda e^{\lambda x} & x \geq 0 \\ 0 & x < 0 \end{cases}
+					\]
+
+				\item Cumulative Distribution Function.
+					\begin{align*}
+						F_{X}(x) &= P(X < x), \\
+						&= \int_{-\infty}^{x} \lambda e^{-\lambda t} \ dt, \\
+						&= -e^{-\lambda t}\Big|_{0}^{x}, \\
+						&= 1 - e^{-\lambda x} \ \ \ x \geq 0
+					\end{align*}
+
+				\item Expectation.
+					\begin{align*}
+						E(X^{n}) &= \int_{0}^{\infty} x^{n} \lambda e^{-\lambda x} \ dx, \\
+						&= -x^{n}e^{-\lambda x}\big|_{0}^{\infty} + \int_{0}^{\infty} e^{-\lambda x}nx^{n-1} \ dx, \\
+						&= 0 + \frac{n}{\lambda}\int_{0}^{\infty}\lambda e^{-\lambda x}x^{n-1} \ dx, \\
+						&= \frac{n}{\lambda} E(X^{n-1})
+					\end{align*}
+				Letting $n = 1$ shows that $E(X) = 1/\lambda$.
+
+				\item Variance. From the above computation of $E(X^{n})$, if we let $n = 2$ we see that $E \left( X^{2} \right) = \frac{2}{\lambda}E(X) = \frac{2}{\lambda^{2}}$, thus the variance is,
+					\begin{align*}
+						\Var(X) &= E\left( X^{2} \right) - \left[ E\left(X\right) \right]^{2}, \\
+						&= \frac{2}{\lambda^{2}} - \frac{1}{\lambda^{2}}, \\
+						&= \frac{1}{\lambda^{2}}
+					\end{align*}
+
+				\item Standard Deviation. The Standard Deviation of a continuous random variable is,
+					\[ \SD(X) = \frac{1}{\lambda} \]
+			\end{enumerate}
+
+			\subsubsection{Uniform}
+			\begin{enumerate}
+				\item Probability Density Function. \[f_{X}(x) = \begin{cases} \frac{1}{b-a} & a \leq x \leq b \\ 0 & \text{otherwise} \end{cases}\]
+
+				\item Cumulative Distribution Function. 
+					\begin{align*}
+						F_{X}(x) &= P(X < x)\\
+						&= \begin{cases} 1 & x > b \\ \frac{x-a}{b-a} & a \leq x \leq b \\ 0 & x < a   \end{cases}
+					\end{align*}
+
+				\item Expectation.
+					\begin{align*}
+						E(X) &= \int_{-\infty}^{\infty} x f_{X}(x) \ dx, \\
+						&= \int_{a}^{b} \frac{x}{b - a} \ dx, \\
+						&= \frac{b^{2} - a^{2}}{2(b - a)}, \\
+						&= \frac{b + a}{2}
+					\end{align*}
+
+				\item Variance.
+					\begin{align*}
+						E(X^{2}) &= \int_{-\infty}^{\infty} x^{2} f_{X}(x) \ dx, \\
+						&= \int_{a}^{b} \frac{x^{2}}{b - a} \ dx, \\
+						&= \frac{b^{3} - a^{3}}{3(b - a)}, \\
+						&= \frac{b^{2} + ab + a^{2}}{3}
+					\end{align*}
+
+					Thus,
+					\begin{align*}
+						\Var(X) &= E\left( X^{2} \right) - \left[ E\left(X\right) \right]^{2}, \\
+						&= \frac{b^{2} + ab + a^{2}}{3} - \left( \frac{b + a}{2} \right)^{2}, \\
+						&= \frac{(b - a)^{2}}{12}
+					\end{align*}
+
+				\item Standard Deviation. \[\SD(X) = \frac{b - a}{2\sqrt{3}}\]
+			\end{enumerate}
+
+	\section{Jointly Distributed Random Variables}
+		\subsection{General Principles}
+			\begin{enumerate}
+				\item Joint Mass Function
+
+				\item Marginal Mass Functions
+
+				\item Joint Density Function
+					\begin{align*}
+						f_{X,Y}(x,y) = 
+					\end{align*}
+
+				\item Marginal Density Functions
+					\begin{align*}
+						f_{X}(x) &= \int_{-\infty}^{\infty} f_{X,Y}(x,y) \ dy, \\
+						f_{Y}(y) &= \int_{-\infty}^{\infty} f_{X,Y}(x,y) \ dx.
+					\end{align*}
+
+				\item Cumulative Distribution Function
+					\begin{align*}
+						F_{X,Y}(x,y) &= P(X < x, \ Y < y), \\
+						&= \int_{t = -\infty}^{y}\int_{s = -\infty}^{x} f_{X,Y}(s,t) \ dsdt
+					\end{align*}
+
+				\item Expectation
+					\begin{align*}
+						E(XY) &= E(X)E(Y), \\
+						&= \int_{-\infty}^{\infty} x f_{X}(x) \ dx \cdot \int_{-\infty}^{\infty} y f_{Y}(y) \ dy, \\
+						&= \int_{-\infty}^{\infty} x \int_{-\infty}^{\infty} f_{X,Y}(x,y) \ dydx \cdot \int_{-\infty}^{\infty} y \int_{-\infty}^{\infty} f_{X,Y}(x,y) \ dxdy, \\
+						&= \int_{-\infty}^{\infty}\int_{-\infty}^{\infty} x f_{X,Y}(x,y) \ dxdy \cdot \int_{-\infty}^{\infty}\int_{-\infty}^{\infty} y f_{X,Y}(x,y) \ dxdy, \\
+						&= \iint_{-\infty}^{\infty} xy f_{X,Y}(x,y) \ dxdy. \\
+						\\
+						E(X + Y) &= E(X) + E(Y)
+					\end{align*}
+
+				\item Covariance
+					\begin{align*}
+						\Cov(X_{1}, X_{2}) &= E(X_{1}X_{2}) - E(X_{1})E(X_{2}). \\
+						\\
+						\Cov(X, X) &= \Var(X), \\
+						\Cov(X, Y) &= \Cov(Y, X), \\
+						\Cov(X + Y, Z) &= \Cov(X, Z) + \Cov(Y, Z), \\
+						\Cov(aX + b, Y) &= a\Cov(X,Y)
+					\end{align*}
+
+				\item Correlation
+					\begin{align*}
+						\Corr(X,Y) &= \frac{\Cov(X,Y)}{\SD(X)\SD(Y)}
+					\end{align*}
+			\end{enumerate}
+
+	\section{Theorems}
+		\subsection{The Law of Large Numbers}
+			\subsubsection{The Weak Law of Large Numbers} Let $X_{1}, X_{2}, \dots$ be sequence of independent and identically distributed random variables, each having finite mean $E\left(X_{i}\right) = \mu$. Then, for any $\epsilon > 0$, \[P\left(\left|\frac{X_{1} + \cdots + X_{n}}{n} - \mu\right| \geq \epsilon \right) \rightarrow 0 \ \ as \ \ n \rightarrow \infty\]
+
+			\subsubsection{The Strong Law of Large Numbers} Let $X_{1}, X_{2}, \dots$ be sequence of independent and identically distributed random variables, each having finite mean $\mu = E\left(X_{i}\right)$. Then, with probability 1, \[\frac{X_{1} + X_{2} + \cdots + X_{n}}{n} \rightarrow \mu \ \ \ as \ \ \ n \rightarrow \infty \]
+
+		\subsection{Central Limit Theorem}
+			\subsubsection{The DeMoivre-Laplace Limit Theorem} If $S_{n}$ denotes the number of successes that occur when $n$ independent trials, each resulting in a success with probability $p$, are performed, then, for any $a < b$, \[P\left(a \leq \frac{S_{n} - np}{\sqrt{np(1-p)}} \leq b \right) \rightarrow \Phi(b) - \Phi(a)\] as $n \rightarrow \infty$.
+
+			\subsubsection{The Central Limit Theorem} Let $X_{1}, X_{2}, \dots$ be sequence of independent and identically distributed random variables, each having mean $\mu$ and variance $\sigma^{2}$. Then the distribution of \[\frac{X_{1} + \cdots + X_{n} - n\mu}{\sigma \sqrt{n}}\] tends to the standard normal as $n \rightarrow \infty$. That is, for $-\infty < a < \infty$, \[P\left(\frac{X_{1} + \cdots + X_{n} - n\mu}{\sigma \sqrt{n}} \leq a\right) \rightarrow \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{a} e^{-x^{2}/2} \ dx \ \ as \ \ n \rightarrow \infty \]
+
+	\section{Applications}
+		\subsection{Probability density functions for functions of continuous random variables} 
+		Given a pdf $f_{X}(x)$, find the pdf of a function of $X$, i.e., for $Y = g(X)$, find $f_{Y}(y)$
+
+		\subsection{Tranformations of jointly distributed random variables}
+
+		\subsection{Z-Scores}
+
+	\section{Skipped Materials}
+		\subsection{Markov's Inequality} If $X$ is a random variable that takes only nonnegative values, then, for any value $a > 0$, \[P(X \geq a) \leq \frac{E(X)}{a}\]
+
+		\subsection{Chebyshev's Inequality} If $X$ is a random variable with finite mean $\mu$ and variance $\sigma^{2}$, then, for any value $k > 0$, \[P\left(|X - \mu| \geq k \right) \leq \frac{\sigma^{2}}{k^{2}}\]
+
+		\subsection{Markov Chains}
+
+	\section{Classic Problems}
+		\subsection{Coupons}\
+\end{document}

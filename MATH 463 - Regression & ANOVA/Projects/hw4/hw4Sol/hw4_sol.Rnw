@@ -1,0 +1,597 @@
+\documentclass{amsart}
+\usepackage{enumerate,amssymb,graphicx,verbatim,fourier}
+\usepackage[noae]{Sweave}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue,     
+ citecolor=blue, urlcolor=red]{hyperref}
+
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\A}{{\mathcal A}}
+\newcommand{\B}{{\mathcal B}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\X}{{\boldsymbol X}}
+\newcommand{\btheta}{\bvec{\theta}}
+\newcommand{\st}{\;:\;}
+\newcommand{\M}{{\mathcal M}}
+\newcommand{\var}{{\rm Var}}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\sd}{{\rm SD}}
+\newcommand{\bvec}[1]{{\boldsymbol #1}}
+\newcommand{\bbeta}{\bvec{\beta}}
+\newcommand{\bX}{\bvec{X}}
+\newcommand{\ssreg}{{\rm SS}_{{\rm Reg}}}
+\newcommand{\ssr}{{\rm SS}_{{\rm Res}}}
+\newcommand{\sst}{{\rm SS}_{{\rm Tot}}}
+\newcommand{\x}{\bvec{x}}
+\newcommand{\Y}{\bvec{Y}}
+\newcommand{\Ls}{{\mathcal L}}
+\newcommand{\Lin}{{\mathcal L}}
+\newcommand{\one}{\bvec{1}}
+\newcommand{\ddelta}{\bvec{\delta}}
+\renewcommand{\P}{{\mathbb P}}
+\DeclareMathOperator{\se}{SE}
+
+\newenvironment{enumeratei}{\begin{enumerate}[\upshape (i)]}
+                           {\end{enumerate}}
+\newenvironment{enumeratea}{\begin{enumerate}[\upshape (a)]}
+                           {\end{enumerate}}
+
+\newenvironment{enumeraten}{\begin{enumerate}[\upshape 1.]}
+                           {\end{enumerate}}
+
+
+\newenvironment{Problem}[1]
+ {
+   \medskip
+   \noindent \textbf{\hypertarget{X:#1}{Problem #1.}}
+ }
+ {
+   %\hyperlink{Sol:#1}{Solution}
+ }
+
+\newenvironment{ProblemSol}[1]{
+  \begin{proof}[\hypertarget{Sol:#1}{Solution to Problem }\hyperlink{X:#1}{#1}]
+}
+{
+\end{proof}
+}
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}
+
+\newcommand{\LinkSol}[1]{                          %%      
+\hfill \hyperlink{Sol:#1}{\framebox{Solution $\checkmark$}}}
+
+\title{Homework 4}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\maketitle
+
+
+\begin{Problem}{1}
+Let $\x_1 = (1,1,1,1,1,1)'$, $\x_2 = (3,-1,4,6,3,3)'$, $\x_3 =
+(7,3,2,0,3,3)'$, $\x_4 = (8,4,9,-5,4,4)'$, $\Y = (4,36,44,12,16,8)'$,
+$V = \Ls(\x_1,\x_2,\x_3,\x_4)$.  Suppose we wish to test 
+$H_0:\beta_4=0$, $\beta_2=\beta_3$.
+\begin{enumeratea}
+\item Find two matrix $\bvec{A}$ such that $H_0$ is equivalent to
+$\bvec{A}\bvec{\beta} = 0$.
+\item Find $\hat{\bvec{\beta}}$, $\hat{\Y}=\bvec{X}\hat{\bvec{\beta}}$, and
+$\bvec{Z} = \bvec{A} \hat{\bvec{\beta}}$ for one of your choices of
+$\bvec{A}$.
+\item Define $V_0$ so that $\bvec{\theta} := \E[\Y \mid \bvec{X}] \in
+V_0$ if and only if $\bvec{A}\bvec{\beta} = 0$.  Find $\hat{\Y}_0 =
+\Pi_{V_0}\Y$, $\Y - \hat{\Y}$ and $\hat{\bvec{Y}}_1 = \hat{\Y} -
+\hat{\Y}_0$.
+\item Determine $\ssr = \|\Y - \hat{\bvec{Y}}\|^2$,
+$\ssr(V_0) = \|\Y - \hat{\Y}_0\|$, and the $F$-statistic.
+\item Verify that $\|\hat{\Y} - \hat{\Y}_0\|^2 =
+\bvec{Z}'[\bvec{A}(\bvec{X}'\bvec{X})^{-1} \bvec{A}']^{-1} \bvec{Z}$.
+\item Find $\bvec{a}$ so that $\|\hat{\Y} -
+\hat{\Y}_0\|^2 = \langle a, \Y \rangle^2/\| \bvec{a} \|^2]$
+\end{enumeratea}
+\end{Problem}
+\begin{ProblemSol}{1}
+We have that
+\[
+\bvec{A} =
+\begin{bmatrix}
+0 & 1 & -1 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix} \,.
+\]
+Another choice is
+\[
+\tilde{\bvec{A}} =
+\begin{bmatrix}
+0 & 1 & -1 & 1 \\
+0 & 0 & 0  & 1
+\end{bmatrix} \,.
+\]
+The model matrix is
+\[
+  \bvec{X} =
+  \left(
+\begin{array}{cccc}
+ 1 & 3 & 7 & 8 \\
+ 1 & -1 & 3 & 4 \\
+ 1 & 4 & 2 & 9 \\
+ 1 & 6 & 0 & -5 \\
+ 1 & 3 & 3 & 4 \\
+ 1 & 3 & 3 & 4 \\
+\end{array}
+\right)
+\,.
+\]
+To find the projection onto $V$, we find
+\[
+  \Pi_V = \bvec{X}(\bvec{X}'\bvec{X})^{-1}\bvec{X}'
+  =
+  \left(
+\begin{array}{cccccc}
+ \frac{11}{12} & -\frac{1}{12} & -\frac{1}{12} & -\frac{1}{12} & \frac{1}{6} & \frac{1}{6} \\
+ -\frac{1}{12} & \frac{11}{12} & -\frac{1}{12} & -\frac{1}{12} & \frac{1}{6} & \frac{1}{6} \\
+ -\frac{1}{12} & -\frac{1}{12} & \frac{11}{12} & -\frac{1}{12} & \frac{1}{6} & \frac{1}{6} \\
+ -\frac{1}{12} & -\frac{1}{12} & -\frac{1}{12} & \frac{11}{12} & \frac{1}{6} & \frac{1}{6} \\
+ \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} \\
+ \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} \\
+\end{array}
+\right) \,.
+\]
+We find that the fitted values are then
+\[
+  \hat{\bvec{Y}} =
+    \left(
+\begin{array}{cccccc}
+ \frac{11}{12} & -\frac{1}{12} & -\frac{1}{12} & -\frac{1}{12} & \frac{1}{6} & \frac{1}{6} \\
+ -\frac{1}{12} & \frac{11}{12} & -\frac{1}{12} & -\frac{1}{12} & \frac{1}{6} & \frac{1}{6} \\
+ -\frac{1}{12} & -\frac{1}{12} & \frac{11}{12} & -\frac{1}{12} & \frac{1}{6} & \frac{1}{6} \\
+ -\frac{1}{12} & -\frac{1}{12} & -\frac{1}{12} & \frac{11}{12} & \frac{1}{6} & \frac{1}{6} \\
+ \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} \\
+ \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{6} \\
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+ 4 \\
+ 36 \\
+ 44 \\
+ 12 \\
+ 16 \\
+ 8 \\
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+ 0 \\
+ 32 \\
+ 40 \\
+ 8 \\
+ 20 \\
+ 20 \\
+\end{array}
+\right) \,.
+\]
+  
+The fitted values and residuals when projecting onto $V$ is
+\[
+\hat{\bvec{Y}} = 
+\left(
+\begin{array}{c}
+ 0 \\
+ 32 \\
+ 40 \\
+ 8 \\
+ 20 \\
+ 20 \\
+\end{array}
+\right),
+\quad
+\bvec{Y} - \hat{\bvec{Y}}
+=
+\left(
+\begin{array}{c}
+ 4 \\
+ 4 \\
+ 4 \\
+ 4 \\
+ -4 \\
+ -12 \\
+\end{array}
+\right) \,.
+\]
+Also,
+\[
+\hat{\bvec{\beta}}
+=
+\left(
+\begin{array}{c}
+ 41 \\
+ -3 \\
+ -8 \\
+ 3 \\
+\end{array}
+\right)\,,
+\quad
+\bvec{A}\hat{\bvec{\beta}}
+=
+\left(
+\begin{array}{c}
+ 5 \\
+ 3 \\
+\end{array}
+\right)
+\,.
+\]
+We have $\ssr(V) = 224$.
+
+
+The vectors $\bvec{c}_1 = (0,1,-1,0)'$ and $\bvec{c}_2=(1,0,0,0)'$ are in the kernel of $\bvec{A}$ and are linearly independent (and so span the kernel), so OLS onto $V_0$ is equivalent to OLS onto
+\[
+\bvec{W} = \bvec{X} \bvec{C}
+= 
+\left(
+\begin{array}{cccc}
+ 1 & 3 & 7 & 8 \\
+ 1 & -1 & 3 & 4 \\
+ 1 & 4 & 2 & 9 \\
+ 1 & 6 & 0 & -5 \\
+ 1 & 3 & 3 & 4 \\
+ 1 & 3 & 3 & 4 \\
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+ 0 & 1 \\
+ 1 & 0 \\
+ 1 & 0 \\
+ 0 & 0 \\
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+ 10 & 1 \\
+ 2 & 1 \\
+ 6 & 1 \\
+ 6 & 1 \\
+ 6 & 1 \\
+ 6 & 1 \\
+\end{array}
+\right) \,.
+\]
+This can also be seen by making the substitution
+$\beta_3 = \beta_2$ and $\beta_4 = 0$ in the model
+equation
+\[
+\E[\bvec{Y} \mid \bvec{X}]
+= \beta_1 \x_1 + \beta_2 \x_2 + \beta_2 \x_3 
+= \beta_1 \x_1 + \beta_2 (\x_2 + \x_3) \,.
+\]
+Then
+\[
+\hat{\bvec{Y}}_0 = 
+\left(
+\begin{array}{c}
+ 4 \\
+ 36 \\
+ 20 \\
+ 20 \\
+ 20 \\
+ 20 \\
+\end{array}
+\right) \,,
+\quad
+\bvec{Y} - \hat{\bvec{Y}}_0 =
+\left(
+\begin{array}{c}
+ 0 \\
+ 0 \\
+ 24 \\
+ -8 \\
+ -4 \\
+ -12 \\
+\end{array}
+\right) \,.
+\]
+We conclude that $\|\hat{\bvec{Y}}_0 - \bvec{Y}\|^2 = 800$.
+Thus
+\[
+F = \frac{(800-224)/2}{224/2} = 2.5714 \,.
+\]
+We have
+\[
+\bvec{Z}'(\bvec{A}(\bvec{X}'\bvec{X})^{-1}\bvec{A}')^{-1}\bvec{Z}
+=
+\left(
+\begin{array}{cc}
+ 5 & 3 \\
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+ 18 & -30 \\
+ -30 & 114 \\
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+ 5 \\
+ 3 \\
+\end{array}
+\right)
+= 
+576 = 800 - 224 \,.
+\]
+The analysis of variance table is displayed in Table \ref{Tab:F1}.
+<<echo=false, results=tex>>=
+library(xtable)
+x2= c(3,-1,4,6,3,3); x3 = c(7,3,2,0,3,3); x4 = c(8,4,9,-5,4,4)
+y = c(4,36,44,12,16,8)
+z = x2+x3
+f = lm(y~z)
+f2 = lm(y~x2+x3+x4)
+xtable(anova(f,f2),caption="F statistic comparing $V_0$ and $V$",label="Tab:F1")
+@
+\end{ProblemSol}
+\begin{Problem}{2}
+Consider the data in the dataset \verb|teengamb| in the package
+\verb|faraway|:
+
+\begin{verbatim}
+install.packages("faraway")
+library(faraway)
+data(teengamb)
+\end{verbatim}
+
+The last line should bring up a description of the variables.
+
+Is there a difference between males and females as relates to gambling
+behavior?  Fit any appropriate model(s) and carry out any appropriate
+test(s).
+\end{Problem}
+\begin{ProblemSol}{2}
+First, let us investigate the linear model giving
+\verb|gamble| as the response and the other
+variables as covariates.  The estimated coefficients
+and the associated $t$-tests are given in Table \ref{Tab:Sum}.
+The $t$-tests are only significant on sex and income.
+
+We might test whether the coefficients of status and verbal are 
+\emph{both} zero. The $F$-test of this hypothesis is given
+in Table \ref{Tab:Fvs}.  Since it is not significant, we
+will assume that status and verbal have zero coefficients,
+i.e.\ are not included in the model.
+
+Finally, we have not considered whether the coefficient of
+income should depend on sex.  We introduce the produce
+\verb|sex:income| to test if there should be a different
+coefficient of income depending on sex, given that
+verb and status are not included.  The $F$-test is
+shown in \ref{Tab:Fis}.  The test is significant, so
+we conclude that the coefficient should depend on sex.
+
+
+<<results=tex,echo=false>>=
+library(faraway)
+library(xtable)
+data(teengamb)
+teengamb$sex = as.factor(teengamb$sex)
+f = lm(gamble~status+income+verbal+sex, data=teengamb)
+xtable(summary(f)$coef, caption="All variables (no interaction)",
+       label="Tab:Sum")
+g1 = lm(gamble~income+sex, data=teengamb)
+xtable(anova(g1,f), caption="F test on verbal and status",
+       label="Tab:Fvs")
+g2 = lm(gamble~income+sex+sex:income, data=teengamb)
+xtable(anova(g1,g2), caption="F test on sex:income", label="Tab:Fis")
+@
+
+<<fig=true, include=false, label=teeng, echo=false>>=
+plot(gamble~income, data=teengamb, pch=19, col=sex)
+abline(coef(g2)[1:2])
+cf = coef(g2)[1:2]+coef(g2)[3:4]
+abline(cf, col="red")
+legend(1,150,c("male","female"),pch=19,col=c("black","red"), 
+       cex=0.5)
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{hw4_sol-teeng}
+\caption{Gamble vs.\ income. \label{Fig:GI}}
+\end{center}
+\end{figure}
+
+In summary, we conclude that the model should fit both
+separate intercepts and slopes (coefficient of income), 
+depending on sex.  Thus if $\bvec{x}$ is income and
+$\bvec{\delta}$ is the indicator of female, we fit
+\[
+\E[\bvec{Y} \mid \bvec{x}, \bvec{\delta}]
+= \beta_0 + \beta_1\bvec{x} + \beta_2 \bvec{\delta} + \beta_3
+\bvec{\delta} \bvec{x} \,.
+\]
+
+A plot of gamble vs.\ income is shown in Figure \ref{Fig:GI}.
+Note that the slope for females looks close to zero.  We
+want to test the hypothesis that 
+$\beta_1 + \beta_3 = 0$.  To do so,
+we fit the model
+\begin{align*}
+E[\bvec{Y} \mid \bvec{x},\bvec{\delta}]
+& = \beta_0 + \beta_1\bvec{x} + \beta_2\bvec{\delta} -
+\beta_1 \bvec{\delta}\bvec{x} \\
+& = \beta_0 + \beta_1\bvec{x}(1-\bvec{\delta}) +
+\beta_2 \bvec{\delta}
+\end{align*}
+and compare with the larger model via an $F$-test.
+(Table \ref{Tab:Tcz}.)  The test is not significant.
+We conclude that, for females, there is no relationship
+between income and gamble.   In fact, females gamble
+very little on average, regardless of income.  Males,
+however, tend to gamble, and an increasing amount 
+depending on income.
+
+<<echo=false, results=tex>>=
+delta = as.numeric(as.character(teengamb$sex))
+g3 = lm(gamble~I(income*(1-delta))+delta, data=teengamb)
+xtable(anova(g3,g2),caption="Test that coefficient of
+       income for females is zero", label="Tab:Tcz")
+@
+
+
+Note that we formulated some of the hypotheses after looking at
+significance level of previous tests; this ``data snooping'' should
+make us skeptical of reported confidence levels.
+
+\end{ProblemSol}
+\begin{Problem}{3}
+Suppose that 11 plots of land are plotted with three varieties
+of corn.  The following lists the yields for the three varieties:
+
+\begin{tabular}{ccc}
+I & II & III \\
+\hline
+52 & 64 & 53 \\
+56 & 57 & 55 \\
+60 & 62 & 58 \\
+56 &    & 50
+\end{tabular}
+
+\begin{enumeratea}
+\item
+Test the hypothesis that the three varieties all have the same expected yield .  
+
+\item
+ Suppose that for the corn yield  the true means were 70, 75, 95 and that
+ $\sigma = 20$. Find the power of the $\alpha = 0.05$ level test for equal  means.
+  \item  How large should $n_0$, the number of observations per treatment (number of plots per treatment) be in order to have power at least 0.90 for the parameters in (a)?
+\end{enumeratea}
+\end{Problem}
+\begin{ProblemSol}{3}
+We fit the model
+\[
+\E[Y \mid \bvec{X}] = \beta_1 + \beta_2 \delta_2 + \beta_3 \delta_3,
+\]
+where 
+\[
+\delta_{i,j} = 
+\begin{cases}
+1 & \text{if $i$-th plot is variety $j$}\\
+0 & \text{otherwise}
+\end{cases}
+\,.
+\]
+Thus $\beta_1 = \mu_1$ and $\beta_j = (\mu_j - \mu_1)$ for $j=2,3$, where
+$\mu_j$ is the expected yield of variety $j$.
+Testing $H_0: \mu_1 = \mu_2 = \mu_3$ is given by the $F$ statistic corresponding to $H_0: \beta_2 = \beta_3 = 0$.  
+The $F$-test is reported in Table \ref{Tab:Fcorn}, and
+is not significant.
+
+
+
+
+<<results=tex, echo=false>>=
+library(xtable)
+y = c(52, 64, 53, 56, 57, 55, 60, 62, 58, 56, 50)
+x = as.factor(c(1,2,3,1,2,3,1,2,3,1,3))
+g = lm(y~x)
+xtable(anova(g),caption="F test of equal means",label="Tab:Fcorn")
+d = (5^2*3*(1-3/11)+25^2*4*(1-4/11)-2*5*25*3*4/11)/400
+fcrit = qf(0.95,2,8)
+pwr = 1-pf(fcrit,2,8,ncp=d)
+pow = function(m){1-pf(fcrit,2,I(3*m-3),I(0.875*m))}
+#need m = 20 (trial and error)
+
+@
+
+Note that $H_0$ corresponds to
+\[
+\bvec{\theta} = \E[\bvec{Y} \mid \bvec{X}] \in V_0 = \Lin(\one) \,.
+\]
+If $W = V \cap V_0^\perp$, then
+the distribution of the $F$-statistic has non-centrality parameter
+$\| \Pi_{W} \bvec{\theta}\|^2/\sigma^2$.
+We write $\x^\perp = \x - \Pi_{V_0}\x$.  Then
+\[
+\| \Pi_{W} \bvec{\theta} \|^2 =
+\beta_2^2 \|\delta_2^\perp\|^2 + \beta_3^2 \|\delta_3^\perp\|^2 
++ 2 \beta_2\beta_3 \langle \delta_2^\perp, \delta_3^\perp \rangle \,.
+\]
+We determine the projection of $\ddelta_j$ on $\bvec{1}$,
+the corresponding residual vector $\ddelta_j^\perp$, and
+the norm:
+\begin{align*}
+\Pi_{V_0} \ddelta_j 
+& = \frac{\langle \ddelta_j, \one\rangle}{\|\one\|^2} \one 
+ = \frac{n_j}{n} \one\\
+\ddelta^\perp_j & = \ddelta_j - \frac{n_j}{n}\one \\
+\delta^\perp_{i,j} & =
+\begin{cases}
+1 - \frac{n_j}{n} & \text{if $i$-th plot is variety $j$} \\
+-\frac{n_j}{n} & \text{otherwise}
+\end{cases}\\
+\| \ddelta^\perp_j \|^2 & = n_j\left(1 - \frac{n_j}{n}\right)^2
++ \left(\frac{n_j}{n}\right)^2
+(n-n_j) \\
+& = n_j\left(1 - \frac{n_j}{n}\right) \,.
+\end{align*}
+Also, since $\ddelta_j \perp \ddelta_k$,
+for $j \neq k$,
+\begin{align*}
+  \langle \ddelta^\perp_j, \ddelta^\perp_k \rangle
+  & = \langle \ddelta_j - \frac{n_j}{n}\one, \ddelta_k 
+  - \frac{n_k}{n}\one \rangle\\
+  & = \langle \ddelta_j, \ddelta_k \rangle
+    -\langle \frac{n_j}{n}\one, \ddelta_k \rangle
+    -\langle \ddelta_j, \frac{n_k}{n}\one \rangle
+    + \langle \frac{n_k}{n} \one, \frac{n_k}{n} \one \rangle\\
+  & = - \langle \ddelta_k, \frac{n_j}{n}\one \rangle
+  - \langle \ddelta_j, \frac{n_k}{n}\one \rangle
+    + \langle \frac{n_j}{n} \one, \frac{n_k}{n} \one \rangle \\
+  & = - \frac{n_j n_k}{n} - \frac{n_jn_k}{n} +
+    \frac{n_j n_k n}{n^2} = - \frac{n_j n_k}{n} \,.
+\end{align*}
+Thus,
+\[
+\| \Pi_W \btheta \|^2 =
+\beta_2^2 n_2\left(1 - \frac{n_2}{n}\right)
++ \beta_3^2 n_3 \left(1 - \frac{n_3}{n}\right)
+- 2 \beta_2\beta_3 \frac{n_jn_k}{n} \,.
+\]
+When $\mu_1 = 70, \mu_2 = 75, \mu_3 = 95$, we
+have $\beta_2 = 75-70=5$ and $\beta_3 = 95-70=25$,
+and thus the noncentrality parameter is
+\[
+\gamma = \frac{\| \Pi_W \btheta \|^2}{\sigma^2} =
+\frac{1}{20^2}\left( 5^2 3(1 - \frac{3}{11})
++ 25^2 4(1 - \frac{4}{11}) -2\cdot 5\cdot 25 \frac{3\cdot 4}{11}
+\right) = 
+3.43 
+\]
+Since the 95-th percentile for a $F_{2,8}$ distribution
+is $4.459$, the power of the test is
+\[
+\P( F_{2,8,3.43} > 4.459) = 0.261 \,.
+\]
+
+If $n_1=n_2=n_3=n_0$, then $n_j/n = 1/3$ and
+the non-centrality parameter $\gamma$ is
+\[
+\gamma(n_0) = 
+\frac{\| \Pi_W \btheta \|^2}{\sigma^2} =
+\frac{2n_0}{3\sigma^2}( \beta_2^2 + \beta_3^2 - \beta_2\beta_3 )
+= 0.875 n_0 \,.
+\]
+
+By trial and error, we see that we need
+$n_0 = 20$ to get the power at least $0.9$.
+\end{ProblemSol}
+
+<<echo=false,results=hide>>=
+Stangle("hw4_sol.Rnw")
+@
+
+\end{document}

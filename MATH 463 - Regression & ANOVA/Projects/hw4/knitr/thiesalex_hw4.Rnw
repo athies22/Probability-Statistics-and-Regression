@@ -1,0 +1,285 @@
+\documentclass{amsart}
+	%% Basic Info
+		\author{Alex Thies}
+		\title{Homework 4 \\ Math 463 - Spring 2017}
+		\email{athies@uoregon.edu}
+	%% boilerplate packages
+		\usepackage{amsmath}
+		\usepackage{amssymb}
+		\usepackage{amsthm}
+		\usepackage{enumerate}
+		\usepackage{mathrsfs}
+		\usepackage{color}
+		\usepackage{hyperref}
+	%% rename the abstract
+		\renewcommand{\abstractname}{Introduction}
+	%% graphics stuff
+		\usepackage{graphicx}
+		\graphicspath{{../images/}}
+	%% my shorthand
+	    % sets
+	    \DeclareMathOperator{\Z}{\mathbb{Z}}
+	    \DeclareMathOperator{\Zp}{\mathbb{Z^{+}}}
+        \DeclareMathOperator{\Zm}{\mathbb{Z^{-}}}
+        \DeclareMathOperator{\N}{\mathbb{Z^{+}}}
+
+
+	    % linear algebra stuff
+		\DeclareMathOperator{\Ell}{\mathscr{L}}
+
+		% stats stuff
+		\DeclareMathOperator{\var}{\rm Var}
+		\DeclareMathOperator{\sd}{\rm SD}
+		\DeclareMathOperator{\SE}{\rm SE}
+
+		% use pretty characters
+		\DeclareMathOperator{\ep}{\varepsilon}
+		\DeclareMathOperator{\ph}{\varphi}
+	%% Levin's shorthand
+		\newcommand{\E}{{\mathcal{E}}}
+		\newcommand{\A}{{\mathcal{A}}}
+		\newcommand{\B}{{\mathcal{B}}}
+		\newcommand{\R}{{\mathbb{R}}}
+		\newcommand{\X}{{\mathbf{X}}}
+		\newcommand{\x}{{\mathbf{x}}}
+		\newcommand{\M}{{\mathcal{M}}}
+		\newcommand{\bvec}[1]{{\boldsymbol #1}}
+		\newcommand{\bbeta}{\bvec{\beta}}
+		\newcommand{\bX}{\bvec{X}}
+		\newcommand{\bY}{\bvec{Y}}
+		\newcommand{\ssreg}{{\rm SS}_{{\rm Reg}}}
+		\newcommand{\ssr}{{\rm SS}_{{\rm Res}}}
+		\newcommand{\sst}{{\rm SS}_{{\rm Tot}}}
+\begin{document}
+	\begin{abstract}
+		I collaborated with Joel Bazzle, Torin Brown, Ashley Ordway and Seth Temple on this assignment.
+	\end{abstract}
+
+	\maketitle
+<<0.Depend&Pack, include=FALSE>>=
+library(xtable)
+library(knitr)
+library(faraway)
+data(teengamb)
+options(digits=2)
+@
+
+	\section*{Problem 1} % (fold)
+	\label{sec:problem_1}
+		Let $x_{1} =(1,1,1,1,1,1)'$, $x_{2} = (3,−1,4,6,3,3)'$, $x_{3} = (7,3,2,0,3,3)'$, $x_{4} = (8,4,9,−5,4,4)'$, $Y = (4,36,44,12,16,8)'$, and $V = \Ell(x_{1},x_{2},x_{3},x_{4})$.
+		Suppose we wish to test $H_{0} : \beta_{4} = 0, \beta_{2} = \beta_{3}$.
+		\begin{enumerate}[(a)]
+			\item Find two matrix $A$ such that $H_{0}$ is equivalent to $A\beta = 0$.
+			\item Find $\hat{\beta}$, $\hat{Y} = X \hat{\beta}$, and $Z = A\hat{\beta}$ for one of your choices of $A$.
+			\item Define $V_{0}$ so that $\theta := \mathbb{E}[Y|X] \in V_{0}$ if and only if $A\beta = 0$.
+			Find $\hat{Y_{0}} = \Pi_{V_{0}}Y$, $Y - \hat{Y}$ and $\hat{Y_{1}} = \hat{Y} - \hat{Y_{0}}$.
+			\item Determine $\rm SS_{Res} = ||Y - \hat{Y}||^{2}$, $\rm SS_{Res}(V_{0}) = ||Y - \hat{Y_{0}}||^{2}$, and the $F$-statistic.
+			\item Verify that $||\hat{Y} - \hat{Y_{0}}||^{2} = Z'[A(X'X)^{-1}A']^{-1}Z$.
+		\end{enumerate}
+		\begin{proof}[Solution]
+<<1.Load data, include=FALSE>>=
+x1 <- c(1,1,1,1,1,1)
+x2 <- c(3,-1,4,6,3,3)
+x3 <- c(7,3,2,0,3,3)
+x4 <- c(8,4,9,-5,4,4)
+Y <- c(4,36,44,12,16,8)
+X <- cbind(x1,x2,x3,x4)
+V <- lm(Y~x2+x3+x4)
+@
+<<1.a, include=FALSE>>=
+# Find two matrices A such that A%*%b=0
+A <- matrix(c(0,0,0,1,0,-1,1,0), ncol = 4)
+@
+<<1.b, include=FALSE>>=
+# Compute beta_hat, do multiplication
+bhat <- solve(t(X)%*%X)%*%t(X)%*%Y
+Yhat <- X%*%bhat
+Z <- A%*%bhat
+@
+<<1.c, include=FALSE>>=
+# collect like terms given the null hyp
+w <- x2 + x3
+V0 <- matrix(c(x1,w), nrow = 6, ncol = 2)
+
+# compute norms
+Y0_hat <- V0%*%solve(t(V0)%*%V0)%*%t(V0)%*%Y
+Y1_hat <- Yhat - Y0_hat
+Y2_hat <- Y - Yhat
+@
+<<1.d, include=FALSE>>=
+SSres <- t(Y2_hat)%*%Y2_hat
+SSres0 <- t(Y - Y0_hat)%*%(Y-Y0_hat)
+Fstat1 <- ((SSres0 - SSres)/(2))/(SSres/2)
+@
+<<1.e, include=FALSE>>=
+check1 <- t(Y1_hat)%*%Y1_hat
+check2 <- t(Z)%*%(solve(A%*%solve(t(X)%*%X)%*%t(A)))%*%Z
+@
+			\begin{enumerate}[(a)]
+				\item Given that $H_{0} : \beta_{4} = 0, \beta_{2} = \beta_{3}$, and upon brushing up on linear algebra, we find the following matrices.
+				Note that $A_{i}$ must have two rows because there are two linear constrains in $H_{0}$.
+				We will use $A_{0}$ as our choice for $A_{i}$ for the rest of this problem.
+					\begin{align*}
+						A_{0} &= \begin{pmatrix}
+							0 & 0 & 0 & 1 \\
+							0 & 1 & -1 & 0
+						\end{pmatrix} \\
+						A_{1} &= \begin{pmatrix}
+							0 & 0 & 0 & 1 \\
+							0 & -1 & 1 & 0
+						\end{pmatrix}
+					\end{align*}
+				\item We compute $\hat{\beta}$, $\hat{Y} = X \hat{\beta}$ and $Z = A\hat{\beta}$ in \verb|R|.
+					\begin{align*}
+					    \hat{\beta} &= (\Sexpr{bhat})', \\
+					    \hat{Y} &= (\Sexpr{Yhat})', \\
+					    Z &= (\Sexpr{Z})'.
+					\end{align*}
+				\item As before, most of the computational work is done in \verb|R|.
+				Note that in order to define $V_{0}$ as requested, we combine $\beta_{2}$ and $\beta_{3}$ thus, $w = \beta_{2} + \beta_{3}$.
+				We define $V_{0} = x_{1} + w$.
+				Computing $\hat{Y_{0}}$, $Y - \hat{Y}$ and $\hat{Y_{1}}$ yields the following,
+				    \begin{align*}
+				        \hat{Y_{0}} &= (\Sexpr{Y0_hat})', \\
+				        Y - \hat{Y} &= (\Sexpr{Y2_hat})', \rm and \\
+				        \hat{Y_{1}} &= (\Sexpr{Y1_hat})'.
+				    \end{align*}
+				\item Again, we compute the requested Residual Sums of Squares and $F$-statistic in \verb|R|.
+				    \begin{align*}
+				        \ssr &= \Sexpr{SSres}, \\
+				        \ssr(V_{0}) &= \Sexpr{SSres0}, \\
+				        F &= \frac{\Sexpr{SSres0} - \Sexpr{SSres}/2}{\Sexpr{SSres}/2}, \\
+				        &= \Sexpr{Fstat1}.
+				    \end{align*}
+				\item We compute that $||\hat{Y} - \hat{Y_{0}}||^{2} = \Sexpr{check1}$ and $Z'[A(X'X)^{-1}A']^{-1}Z = \Sexpr{check2}$.
+				Observe that $\Sexpr{check1} = \Sexpr{check2}$.
+			\end{enumerate}
+		\end{proof}
+	% section problem_1 (end)
+	\section*{Problem 2} % (fold)
+	\label{sec:problem_2}
+		Consider the data in the dataset \verb|teengamb| in the package faraway:
+
+			\verb|install.packages("faraway")|
+
+			\verb|library(faraway)|
+
+			\verb|data(teengamb)|
+
+		The last line should bring up a description of the variables.
+		Is there a difference between males and females as relates to gambling behavior?
+		Fit any appropriate model(s) and carry out any appropriate test(s).
+		\begin{proof}[Solution] We compare the following three models, and perform a $F$ test between each using an \verb|ANOVA| table.
+		The first model considers all variables except sex, the second introduces sex as a variable, and the third model introduces sex as a dummy variable.
+		We can see from the table that upon introducing sex as a descriptive variable we have significance, i.e., sex does have an impact on gambling behavior.
+		Upon comparing sex generally with sex as a category among all other variables we again determine that this is significant, however less so than just considering sex alone.
+
+		We should note however that there are several descriptive variables which haven't been measured/observed which are being absorbed by our error terms that are not independent from the variables which are controlling.
+		These could be things such as parent's educational attainment, whether or not gambling is legal in the jurisdiction(s) from which we are performing observations, etc.
+<<2.Make models, results="asis">>=
+tg.lm0 <- lm(gamble~verbal+status+income, data = teengamb)
+tg.lm1 <- lm(gamble~verbal+status+income+sex, data = teengamb)
+tg.lm2 <- lm(gamble~verbal+status+income+sex+verbal:sex
+             +status:sex+income:sex, data = teengamb)
+xtable(anova(tg.lm0, tg.lm1, tg.lm2))
+@
+		\end{proof}
+	% section problem_2 (end)
+
+	\section*{Problem 3} % (fold)
+	\label{sec:problem_3}
+		Suppose that 11 plots of land are plotted with three varieties of corn.
+		The following lists the yields for the three varieties:
+
+		\begin{tabular}{ccc}
+			I & II & III \\
+			\hline
+			52 & 64 & 53 \\
+			56 & 57 & 55 \\
+			60 & 62 & 58 \\
+			56 & & 50
+		\end{tabular}
+
+		\begin{enumerate}[(a)]
+			\item Test the hypothesis that the three varieties all have the same expected yield.
+			\item Suppose that for the corn yield the true means were 70, 75, 95 and that $\sigma = 20$.
+			Find the power of the $\alpha = 0.05$ level test for equal means.
+			\item How large should $n_{0}$, the number of observations per treatment (number of plots per treatment) be in order to have power at least 0.90 for the parameters in (a)?
+		\end{enumerate}
+		\begin{proof}[Solution]
+<<3.Load data, include=FALSE>>=
+c1 <- c(52,56,60,56)
+c2 <- c(64,57,62)
+c3 <- c(53,55,58,50)
+mu1 <- mean(c1)
+mu2 <- mean(c2)
+mu3 <- mean(c3)
+gmu <- (mu1+mu2+mu3)/3
+
+var1 <- 4*var(c1)
+var2 <- 3*var(c2)
+var3 <- 4*var(c3)
+
+SSW <- var1+var2+var3
+SSB <- 4*(mu1-gmu)^2 + 3*(mu2-gmu)^2 + 4*(mu3-gmu)^2
+
+Fstat2 <- (SSB/(2))/(SSW/(8))
+pval <- 1-pf(Fstat2, 2, 8)
+@
+<<3b, include=FALSE>>=
+mua1 <- 70
+mua2 <- 75
+mua3 <- 95
+errvar <- 20^2
+gmua <- 70 * 4/11 + 75 * 3/11 + 95 * 4/11
+CSS <- 4*(mua1-gmua)^2 + 3*(mua2-gmua)^2 + 4*(mua3-gmua)^2
+# need an ncp
+del <- CSS/errvar
+fstar <- qf(1 - .05, 2, 8)
+power <- 1 - pf(fstar, 2, 8, ncp=del)
+# power is too low
+@
+<<3c, include=FALSE>>=
+gmua1 <-(70+75+95)/3
+CSSnew <- (mua1-gmua1)^2 + (mua2-gmua1)^2 + (mua3-gmua1)^2
+# Use Seth's genius idea to make a for loop to determine most efficient sample size for the desired power
+for(i in 4:20){
+  del1 <- i *CSSnew/errvar
+  DFW <-3*(i-1)
+  FSTAR <-qf(1-.05,2,DFW)
+  POWER<- (1-pf(FSTAR,2,DFW, ncp=del1))
+  if(POWER>.90){print(i)}
+}
+# use n=16
+@
+		\begin{enumerate}[(a)]
+			\item In order to test $H_{0}: \mu_{1} = \mu_{2} = \mu_{3}$ we perform an $F$ test, in this case we refer to $\rm RSS_{Full}$ as the within group variability (SSW), and $\rm RSS_{Small}$ as the between group variability (SSB).
+			We find that $\mu_{1} = \Sexpr{mu1}$, $\mu_{2} = \Sexpr{mu2}$, and $\mu_{3} = \Sexpr{mu3}$, thus the grand mean is $\mu_{\rm G} = n^{-1}\sum_{i=1}^{3} \mu_{i} = \Sexpr{gmu}$.
+			With these quantities we can compute the SSB as follows,\footnote{More detailed computations are shown in the R chunks.}
+				\begin{align*}
+					\rm SSB &= \sum\limits_{i=1}^{3} n_{i} \left( \bar{Y}_{i,.} - \bar{Y}_{.,.} \right)^{2}, \\
+					&= \Sexpr{SSB}.
+				\end{align*}
+			For SSW we sum over the variances of each column, weighted by their size,
+				\begin{align*}
+					\rm SSW &= \sum\limits_{i=1}^{3}\sum\limits_{j=1}^{n_{i}} \left( Y_{i,j} - \bar{Y}_{i,.} \right)^{2}, \\
+					&= \Sexpr{SSW}.
+				\end{align*}
+			We compute the $F$-statistic as follows,
+				\begin{align*}
+					F &= \frac{SSB/df_{B}}{SSW/df_{W}}, \\
+					&= \frac{\Sexpr{SSB}/2}{\Sexpr{SSW}/8}, \\
+					&= \Sexpr{Fstat2}.
+				\end{align*}
+			We find that the p-value is \Sexpr{pval}, given that this is greater than most reasonable level $\alpha$'s, we fail to reject $H_{0}$
+			\item In order to compute the power for $H_{1}: \mu_{1} = \Sexpr{mua1}, \mu_{2} = \Sexpr{mua2}$ and $\mu_{3} = \Sexpr{mua3}$, with $\sigma^{2} = \Sexpr{errvar}$ we must find the grand mean for these supposed $\mu{i}$'s, and with that compute the Corrected Sum of Squares (CSS).
+			We do these computations in \verb|R| and find that the new grand mean $\mu_{G_{1}} = \sum_{i=1}^{3} \frac{n_{i}}{11} \bar{Y}_{i,.} = \Sexpr{gmua}$.
+			With this new grand mean we find that CSS = \Sexpr{CSS}.
+			When computing the power we must compute our non-centrality parameter $\delta$, for one-way analysis of variance this is simply $\delta = \rm CSS/\sigma^{2} = \Sexpr{del}$.
+			If we suppose $\alpha = 0.05$, we compute that the power is $\Sexpr{power}$, which is too low for us to say that our conclusion in (a) is well-founded.
+			\item Here I use Seth's idea to use a for loop to try new sample sizes starting at $n_{i} = 20$ down to $n_{i} = 4$ (our largest sample), with the loop terminating when the power dips below our desired value of 0.9.
+			Given this method we determine that the least sample size for which we have a power of at least 0.9 is $n_{i} = 16$.
+		\end{enumerate}
+		\end{proof}
+	% section problem_3 (end)
+\end{document}

@@ -1,0 +1,615 @@
+\documentclass{amsart}
+\usepackage{enumerate,amssymb,graphicx,verbatim}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue,     
+ citecolor=blue, urlcolor=red]{hyperref}
+
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\A}{{\mathcal A}}
+\newcommand{\B}{{\mathcal B}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\st}{\;:\;}
+\newcommand{\M}{{\mathcal M}}
+\newcommand{\var}{{\rm Var}}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\sd}{{\rm SD}}
+\newcommand{\bvec}[1]{{\boldsymbol #1}}
+\newcommand{\bbeta}{\bvec{\beta}}
+\newcommand{\bX}{\bvec{X}}
+\newcommand{\ssreg}{{\rm SS}_{{\rm Reg}}}
+\newcommand{\ssr}{{\rm SS}_{{\rm Res}}}
+\newcommand{\sst}{{\rm SS}_{{\rm Tot}}}
+\newcommand{\bnox}{\beta_{{\rm NOx}}}
+\newcommand{\bedu}{\beta_{{\rm educ}}}
+\newcommand{\NOx}{\bvec{x}_{{\rm NOx}}}
+\newcommand{\edu}{\bvec{x}_{{\rm educ}}}
+\newcommand{\Lin}{{\mathcal L}}
+\newcommand{\cov}{{\rm Cov}}
+\newcommand{\x}{{\bvec{x}}}
+\renewcommand{\P}{{\mathbb P}}
+\newcommand{\aaa}{\tilde{\bvec{X}}'\tilde{\bvec{X}}}
+\newcommand{\aab}{\tilde{\bvec{X}}'\x_k}
+\newcommand{\aba}{\x_k' \tilde{\bvec{X}}}
+\newcommand{\abb}{\x_k'\x_k}
+\newcommand{\X}{\bvec{X}}
+
+\newenvironment{enumeratei}{\begin{enumerate}[\upshape (i)]}
+                           {\end{enumerate}}
+\newenvironment{enumeratea}{\begin{enumerate}[\upshape (a)]}
+                           {\end{enumerate}}
+
+\newenvironment{enumeraten}{\begin{enumerate}[\upshape 1.]}
+                           {\end{enumerate}}
+
+
+\newenvironment{Problem}[1]
+ {
+   \medskip
+   \noindent \textbf{\hypertarget{X:#1}{Problem #1.}}
+ }
+ {
+   %\hyperlink{Sol:#1}{Solution}
+ }
+
+\newenvironment{ProblemSol}[1]{
+  \begin{proof}[\hypertarget{Sol:#1}{Solution to Problem }\hyperlink{X:#1}{#1}]
+}
+{
+\end{proof}
+}
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}
+
+\newcommand{\LinkSol}[1]{                          %%      
+\hfill \hyperlink{Sol:#1}{\framebox{Solution $\checkmark$}}}
+
+\title{Homework 3 Solution}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\maketitle
+
+\begin{Problem}{SMSA}
+Consider the data at
+
+\url{http://pages.uoregon.edu/dlevin/DATA/smsa.txt}
+
+This file is tab-delimited, so use the following to read it:
+
+<<>>=
+smsa = na.omit(
+  read.table("http://pages.uoregon.edu/dlevin/DATA/smsa.txt",
+                          header=T,sep="\t",row.names=1))
+@
+ 
+The variables are explained in
+
+\url{http://pages.uoregon.edu/dlevin/DATA/SMSA.html}
+
+The goal is to understand the relationship of Mortality to the other variables.
+
+Note that \verb|NOx| and \verb|NOxPot| are identical, so exclude one (why?)
+
+The variables can be divided into demographic and climate variables.  Is there 
+significant evidence that the climate variables should be included in modeling mortality?  
+Explain any test that you perform.  
+
+Give a confidence interval for the expected Mortality in Indianapolis.  What assumptions are you 
+making to guarantee that the confidence level of this interval?  Are these assumptions reasonable?  
+Is this interval useful?  What is the source of uncertainty, if any, about the mortality rate in Indianapolis?  
+
+ 
+
+Give a confidence interval for the coefficient of NOx.  Does the length of this interval depend 
+on which other variables you include in the model?  Discuss.
+
+ 
+
+Suppose all variables are included except NOxPot, and you want to test that the coefficients of NOx and Education are both zero.   Estimate the power of the appropriate test of this hypothesis, when the 
+coefficients are $1$ and $-10$, respectively. 
+
+
+If the power is low, discuss why.
+\end{Problem}
+ 
+\begin{ProblemSol}{SMSA}
+
+Since \verb|NOx| and \verb|NOxPot| are identical, including both will cause the design matrix $\bvec{X}$ to
+have less than full rank, leading to difficulties computing the OLS estimates.  We leave $NOx$ out.
+
+We want to determine if any of the climate variables should be included in the model.  In other words, we test
+\[
+H_0: \beta_{{\rm JanTemp}} = \beta_{{\rm JulyTemp}} = \beta_{{\rm RelHum}} = \beta_{{\rm Rain}}= 0 \,.
+\]
+To test whether these coefficients are simultaneously zero, we perform an $F$-test, comparing the
+model with all variables to the sub-model omitting these three variables.
+
+The result of that test is summarized in Table \ref{Tab:Anova}.  Since the $p$-value is $0.03$, there is
+reasonable evidence that this hypothesis is false.  
+
+
+<<echo=false,results=tex>>=
+smsa = na.omit(read.table("http://pages.uoregon.edu/dlevin/DATA/smsa.txt",
+                          header=T,sep="\t",row.names=1))
+library(xtable)
+smsa$NOxPot <- NULL
+fit1 = lm(Mortality~., data=smsa)
+fit2 = lm(Mortality~Education+PopDensity+X.NonWhite+X.WC+pop+pop.house+income+HCPot+S02Pot+NOx, data=smsa)
+prIn = round(predict(fit1, interval="confidence")["Indianapolis, IN",2:3],2)
+xtable(anova(fit2,fit1),label="Tab:Anova",caption="F-test that climate coefficients are zero")
+ci2 = round(confint(fit2)[11,],3)
+ci1 = round(confint(fit1)[15,],3)
+@
+
+Fitting a model with all variables, a 95\% confidence interval for expected mortality in
+a city with identical covariates (the variables on the right-hand side of the model equation)
+as Indianapolis is
+\[
+[\Sexpr{prIn[1]},\; \Sexpr{prIn[2]}] \,.
+\]
+The assumptions used to assert the 95\% confidence level of this interval are
+\begin{itemize}
+\item The data are observations on variables $\bvec{Y}$ and $\bvec{X}$ satsfying
+\begin{equation} \label{Eq:ModEq}
+\bvec{Y} = \bvec{X} \bvec{\beta} + \bvec{\ep} \,.
+\end{equation}
+\item The error vector $\bvec{\ep}$ in \eqref{Eq:ModEq} have a Normal distribution and are uncorrelated across 
+observations,
+\item The errors are independent of the covariates
+\end{itemize}
+All of these assumptions require a leap of faith.  Indeed, it is hard to imagine that there are not other variables which are important determinants of mortality besides those included here.  Furthermore, having surely omitted some variables which are correlated with both the included covariates and mortality, it is unlikely the covariates are uncorrelated with the $\bvec{\ep}$ in \eqref{Eq:ModEq}.
+
+Since you know what the measured mortality is in Indianapolis, what is the point of finding
+a confidence interval for $\E[ Y_{{\rm indianapolis}} \mid \bvec{x}^{({\rm indianapolis})}$],
+where $\bvec{x}^{({\rm indianapolis})}$ are the observed covariates in Indianapolis?  How we
+interpret this expectation depends on how we interpret the error term in the model
+\[
+y_{{\rm indianapolis}} = \bvec{\beta} \bvec{x}^{({\rm indianapolis})} + \ep_{{\rm indianapolis}} \,.
+\]
+The error piece $\ep$ may include other variables which are determinants of mortality but were not included, 
+measurement error (the mortality rate may itself be imperfectly measured, if it is determined through random sampling), and intrinsic randomness.  
+The confidence interval is useful if you believe that the error is produced largely from measurement
+error and intrinsic randomness rather than from  omitted  covariates.  Indeed, if the error comes from
+measurement or pure chance, then if the data is collected in Indianapolis in other years, 
+assuming the included covariates remain constant, then the mortality may change due to this chance components.
+
+In all circumstances, the interval is only useful if you believe the underlying model.
+
+The 95\% confidence interval for $\beta_{{\rm NOx}}$ when all the variables are included is
+\[
+[\Sexpr{ci1[1]},\Sexpr{ci1[2]}] \,,
+\]
+while the 95\% confidence interval when the climate variables are omitted is
+\[
+[\Sexpr{ci2[1]},\Sexpr{ci2[2]}] \,.
+\]
+The intervals are different depending on what variables are included in the regression model.
+This can be seen from the formula for the the standard error for $\beta_i$, which is
+$\hat{\sigma^2} (\bvec{X}'\bvec{X})^{-1}_{i,i}$.  As discussed elsewhere, unless the
+variables are orthogonal, including or excluding variables changes the matrix entries
+$(\bvec{X}'\bvec{X})^{-1}_{i,i}$.
+
+Let $\bnox$ and $\bedu$ be the coefficients of \verb|NOx| and \verb|education|.
+We want to test 
+\[
+H_0: \bnox = \bedu = 0 \,.
+\]
+using the $F$-test.  Let
+$V_0$ be the linear span of all the variables excluding $\NOx$ and $\edu$, 
+let $W = \Lin(\NOx,\edu)$,
+let $\edu^\perp = \Pi_{V_0^\perp}(\edu)$, and let
+$\NOx^\perp = \Pi_{V_0^\perp}(\NOx)$.
+<<echo=false>>=
+lm1 = lm(Mortality~., data=smsa)
+sig = round(summary(lm1)$sigma,3)
+eduperp = residuals(lm(Education~.-NOx-Mortality,data=smsa))
+NOxperp = residuals(lm(NOx~.-Education-Mortality,data=smsa))
+nseduperp = round(sum(eduperp^2),3)
+nsNOxperp = round(sum(NOxperp^2),3)
+ipeduNOx = round(sum(NOxperp*eduperp),3)
+desig2 = 100*nseduperp+nsNOxperp-20*ipeduNOx
+de = round(desig2/sig^2,3)
+fc = round(qf(0.95,2,44),3)
+pwr = round(I(1 - pf(fc,2,44,de)),3)
+@
+When $\bedu = -10$ and $\bnox = 1$, 
+\begin{align*}
+\| \Pi_{W}(\bvec{\theta})\|^2  & =
+\bedu^2 \| \edu^\perp \|^2 + \bnox^2 \| \NOx^\perp \|^2 +
+2 \bedu\bnox \langle \edu^\perp, \NOx^\perp \rangle \\
+& = 
+\bedu^2 \Sexpr{nseduperp} + \bnox^2 \Sexpr{nsNOxperp} +
+2 \bedu \bnox \Sexpr{ipeduNOx} \\
+& = 100 \cdot \Sexpr{nseduperp} + 1\cdot \Sexpr{nsNOxperp}
++ 2 (10)(-1) \Sexpr{ipeduNOx} \\
+& = \Sexpr{100*nseduperp+nsNOxperp-20*ipeduNOx}\,.
+\end{align*}
+Since $\hat{\sigma^2} = \Sexpr{sig^2}$, 
+\begin{align*}
+\delta & = \frac{\|\Pi_W \bvec{\theta}\|^2}{\sigma^2} \\
+\hat{\delta} & = \frac{\Sexpr{desig2}}{\Sexpr{sig^2}} = \Sexpr{de}
+\end{align*}
+Since $f^\star = \Sexpr{fc}$ is the 95-th percentile of the $F$ distribution with
+$2$ and $44$ degrees of freedom, the power of the test is approximately
+\[
+\P(F > f^\star \mid \delta = \Sexpr{de}) = \Sexpr{pwr} \,.
+\]
+The power is low because $\beta_{{\rm NOx}}\|\NOx^\perp\|/\sigma$ and $\beta_{{\rm edu}}\|\edu^\perp\|/\sigma$ are small.
+
+By fitting the model with the given variables, it is assumed that the mortality in Indianapolis is the observed value of a random variable equal to a linear combination of the covariates (the variables on the right-hand side of the model equation) plus a random disturbance term.  
+
+ 
+\end{ProblemSol} 
+
+%2, 3, 5, 9, 10-14  
+
+\begin{Problem}{Freedman 4.2}
+In the OLS regression model, do the residuals always have mean 0? Discuss briefly.
+\end{Problem}
+\begin{ProblemSol}{Freedman 4.2}
+The meaning of the word ``mean'' here is abiguous.  In the sense of expectation,
+\begin{align*}
+\E[ \Pi_{V^\perp}(\bvec{Y} \mid \bvec{X})] 
+& = \E[ \Pi_{V^\perp}(\bvec{X}\bvec{\beta} + \bvec{\ep}) \mid \bvec{X} ] \\
+& = \Pi_{V^\perp} \E[\bvec{\ep} \mid \bvec{X}]
+\end{align*}
+So under the assumptions that $\bvec{\ep}$ has expecation $0$ and is independent of $\bvec{X}$,
+the expectation of the residuals is zero.
+
+What about if ``mean'' is interpreted as ``sample mean''? Provided that an intercept is included,
+$\hat{\bvec{Y}}-\bvec{Y}$ is orthogonal to $\bvec{1}$, whence
+\[
+0 = \langle \bvec{1}, \hat{\bvec{Y}}-\bvec{Y} \rangle = \sum_i (\hat{Y}_i - Y_i) \,,
+\]
+in this case, the residuals sum to zero and their sample mean must also be zero.
+
+If no intercept is included, then the residuals may not be orthogonal to $\bvec{1}$,
+whence the residuals may not sum to zero.
+\end{ProblemSol}
+
+\begin{Problem}{Freedman 4.3} True or false, and explain. If, after conditioning on $X$, the disturbance terms in a
+regression equation are correlated with each other across subjects, then 
+\begin{enumeratea}
+\item the OLS estimates are likely to be biased;
+\item the estimated standard errors are likely to be biased.
+\end{enumeratea}
+\end{Problem}
+\begin{ProblemSol}{Freedman 4.3}
+ Note that
+ \[
+  \E[ (\bvec{X}'\bvec{X})^{-1} \bvec{X}' (\bvec{X \bvec{\beta} + \bvec{\ep})} \mid \bvec{X} ]
+  = \bvec{\beta} + (\bvec{X}'\bvec{X})^{-1}\bvec{X}' \E[\bvec{\ep} \mid \bvec{X}]
+ \]  
+ The last term vanishes if $\E[\bvec{\ep} \mid \bvec{X}]=0$, which does not depend on the
+ convariance structure.
+ 
+ On the other hand, let $\bvec{M} = (\bvec{X}'\bvec{X})^{-1}$; we have
+ \begin{equation*}
+  \var( \bvec{M} \bvec{X}' \bvec{Y})
+    = \bvec{M} \bvec{X}' \cov(\ep) \bvec{X} \bvec{M} \,.
+ \end{equation*}   
+ If $\cov(\ep) = \sigma^2 I$, then this reduces to $\sigma^2 \bvec{M}$, whence the
+ expression $\sigma \sqrt{\bvec{M}_{i,i}}$ gives the standard deviation of
+ $\hat{\beta}_i$.  If, on the other hand, $\cov(\ep)$ is not a multiple of the identity,
+ then $\sigma \sqrt{\bvec{M}_{i,i}}$ may not be the standard deviation of
+ $\hat{\beta}_i$. 
+\end{ProblemSol}
+
+\begin{Problem}{Freedman 4.5}
+You are using OLS to fit a regression equation. True or false, and explain: 
+\begin{enumeratea}
+\item If you exclude a variable from the equation, but the excluded variable is orthogonal to the other variables
+in the equation, you won't bias the estimated coefficients of the remaining variables.
+\item If you exclude a variable from the equation, and the excluded variable isn't orthogonal to the other 
+variables, your estimates are going to be biased.
+\item If you put an extra variable into the equation, you won’t bias the estimated coefficients -- as long as 
+the error term remains independent of the explanatory variables.
+\item If you put an extra variable into the equation, you are likely to bias the estimated coefficients -- if
+the error term is dependent on that extra variable.
+\end{enumeratea}
+\end{Problem}
+\begin{ProblemSol}{Freedman 4.5}
+Let $\tilde{\bvec{\beta}} = (\beta_0,\ldots,\beta_{k-1})'$ be the vector of parameters
+omitting the coefficient of $\x_k$, and $\widehat{\tilde{\bvec{\beta}}}$ for
+the corresponding OLS estimates.
+If $\tilde{\bvec{X}}$ is the matrix of covariates excluding $\x_k$, then
+\[
+\widehat{\tilde{\bvec{\beta}}}
+= (\tilde{\X}'\tilde{\X})^{-1} \tilde{\bvec{X}}'\bvec{Y} \,.
+\]
+Taking conditional expectation,
+\begin{align}
+\E[ \widehat{\tilde{\bvec{\beta}}} \mid \bvec{X}] 
+& = (\tilde{\X}'\tilde{\X})^{-1} \tilde{\bvec{X}}'
+[(\tilde{\bvec{X}}\tilde{\beta} + \bvec{x}_k\beta_k) +\E[\bvec{\ep}\mid \bvec{X}] ]
+\nonumber \\
+& =  (\tilde{\X}'\tilde{\X})^{-1} \tilde{\bvec{X}}'\tilde{\bvec{X}}'\tilde{\bvec{\beta}}
++ (\tilde{\X}'\tilde{\X})^{-1} \tilde{\bvec{X}}'\bvec{x}_k\beta_k \nonumber \\
+& = \tilde{\bvec{\beta}} + (\tilde{\X}'\tilde{\X})^{-1} \tilde{\bvec{X}}'\bvec{x}_k\beta_k 
+\label{Eq:ExpHat}
+\end{align}
+\begin{enumeratea}
+\item True.  From \eqref{Eq:ExpHat}, if $\bvec{x}_k \perp \tilde{\bvec{X}}$,
+then
+\[
+\E[ \widehat{\tilde{\bvec{\beta}}} \mid \bvec{X}] 
+= \tilde{\bvec{\beta}} \,,
+\]
+and the OLS estimator is unbiased.
+%Partition $\bvec{X} = [\tilde{\bvec{X}} \; \bvec{x}_k]$.
+%In \eqref{Eq:PartMat},  if $\bvec{x}_k \perp \tilde{\bvec{X}}$, then
+%the off-diagonal blocks are zero and the diagonal blocks are
+%$\tilde{\bvec{X}}'\tilde{\bvec{X}}$ and $\bvec{x}_k'\bvec{x}_k$.
+%Thus,
+%\[
+%(\bvec{X}'\bvec{X})^{-1} 
+%\begin{bmatrix}
+%\tilde{\bvec{X}}'\bvec{Y} \\ \bvec{x}_k'\bvec{Y}
+%\end{bmatrix}
+%= 
+%\begin{bmatrix}
+%(\tilde{\bvec{X}}'\tilde{\bvec{X}})^{-1} \tilde{\bvec{X}}'\bvec{Y} \\
+%\cdots
+%\end{bmatrix} \,.
+%\]
+%We conclude that, in this case, the OLS estimates when regressing on $\tilde{\bvec{X}}$
+%agree with those when regressing on all the variables.
+
+%If an excluded variable is orthogonal to all included variables, the OLS estimator for the
+%included variables does not change, and hence is not biased.
+\item True.  From \eqref{Eq:ExpHat}, if
+$\x_j'\x_k \neq 0$ for any $j \neq k$, then
+the second term in \eqref{Eq:ExpHat} is non-zero, and the estimator is biased.
+\item True.  Adding a variable which is independent of the error will not introduce
+bias, because the model equation
+\[
+\bvec{Y} = \bvec{X}\bvec{\beta} + \bvec{\ep}
+\]
+still remains valid, even if $\beta_k = 0$ in reality.  The assumptions needed to
+guarantee an unbiased estimate still hold.
+\item True, see Exercise 14 below for details.
+\end{enumeratea}
+\end{ProblemSol}
+
+
+ 
+
+
+\begin{Problem}{Freedman 4.9}
+True or false, and explain:
+\begin{enumeratea}
+\item Collinearity leads to bias in the OLS estimates.
+\item Collinearity leads to bias in the estimated standard errors for the OLS estimates
+\item Collinearity leads to big standard errors for some estimates.
+\end{enumeratea}
+\end{Problem}
+\begin{ProblemSol}{Freedman 4.9}
+Only the last statement is true.  Collinearity will not violate any of the assumptions which make the OLS estimators unbiased.  However, a near collinear relationship will make the standard errors large.  To see this,
+partition  $\bvec{X} = [\tilde{\bvec{X}} \; \bvec{x}_k]$.  Then
+\begin{align} \nonumber
+(\bvec{X}' \bvec{X})^{-1} & = 
+\begin{bmatrix}
+\tilde{\bvec{X}}'\tilde{\bvec{X}} & \tilde{\bvec{X}}'\bvec{x}_k \\
+\bvec{x}_k' \tilde{\bvec{X}} & \bvec{x}_k'\bvec{x}_k 
+\end{bmatrix}^{-1} \\
+& =
+\begin{bmatrix}
+(\tilde{\bvec{X}}'\tilde{\bvec{X}} - \tilde{\bvec{X}}'\bvec{x}_k (\bvec{x}_k'\bvec{x})^{-1}
+\bvec{x}_k'\tilde{\bvec{X}})^{-1} & B_{12} \\
+B_{21} & (\bvec{x}_k'\bvec{x}_k - \bvec{x}_k' \tilde{\bvec{X}}(\tilde{\bvec{X}}'\tilde{\bvec{X}})^{-1} 
+\tilde{\bvec{X}}'\bvec{x}_k)^{-1}
+\end{bmatrix} \,,
+\label{Eq:PartMat}
+\end{align}
+where
+\begin{align*}
+B_{12} & = (\aaa)^{-1}\aab(\aba(\aaa)^{-1}\aab-\abb)^{-1} \\
+B_{21} & = (\abb)^{-1}\aba(\aab\abb^{-1}\aba-\aaa)^{-1}
+\end{align*}
+
+Let $V_k$ be the span of the columns of $\tilde{\bvec{X}}$.
+Note that if $\bvec{x}_k^\perp = \bvec{x} - \Pi_{V_k}\bvec{x}$, then
+the lower right-hand block of the matrix above is
+\[
+(\| \x_k \|^2 - \| \Pi_{V_k}\x_k \|^2)^{-1} = \| \bvec{x}_k^\perp \|^{-2} \,.
+\]
+If $\x_k$ is nearly a linear combination of the other columns, then $\bvec{x}_k^\perp$ is
+small and thus the variance of $\hat{\beta}_k$ is large, since the variance is
+$\sigma^2 \|\bvec{x}_k\|^{-2}$.
+]
+\end{ProblemSol}
+
+
+\begin{Problem}{Freedman 4.10}
+Suppose $(X_i, W_i, \ep_i)$ are IID as triplets across subjects $i = 1, \ldots, n$, where $n$
+is large; $\E(X_i) = \E( W_i) = \E( \ep_i) = 0$, and $\ep_i$ is independent of $(X_i, W_i)$. 
+Happily, $X_i$ and $W_i$ have positive variance; they are not perfectly correlated. The response variable 
+$Y_i$ is in truth this:
+\[
+Y_i = aX_i + bW_i + \ep_i \,.
+\]
+We can recover $a$ and $b$, up to random error, by running a regression of 
+$Y_i$ on $X_i$ and $W_i$. No intercept is needed. Why not? 
+What happens if $X_i$ and $W_i$ are perfectly correlated (as random variables)?
+\end{Problem}
+
+\begin{ProblemSol}{Freedman 4.10}
+No intercept is needed in fitting the model $Y_i = aX_i + bW_i + \ep_i$ since there is no intercept in the model.  If $W_i$ and $X_i$ and perfecly correlated, then $W_i = r X_i + s$, and thus the design matrix has rank less than $2$ and the inverse of $[\bvec{X} \bvec{W}]'[\bvec{X} \bvec{W}]$, required in the OLS estimates of $a$ and $b$, does  not exists.
+\end{ProblemSol}
+
+\begin{Problem}{Freedman 4.11} (This continues question Freedman 4.10.) 
+Tom elects to run a regression of $Y_i$ on $X_i$, omitting $W_i$. He will use the coefficient of 
+$X_i$ to estimate $a$.
+\begin{enumeratea}
+\item
+What happens to Tom if $X_i$ and $W_i$ are independent? 
+\item
+What happens to Tom if $X_i$ and $W_i$ are dependent?
+\end{enumeratea}
+\end{Problem}
+
+\begin{ProblemSol}{Freedman 4.11}
+Regressing $Y_i$ on $X_i$ alone, the OLS estimator of
+$a$ is given by:
+\[
+\hat{a} = \frac{\langle \bvec{Y}, \bvec{X} \rangle}{ \|\bvec{X}\|^2} \,.
+\]
+We always have 
+\begin{align*}
+\E[\langle \bvec{X}, \bvec{W} \rangle \mid \bvec{X}]
+& = \sum_{i=1}^n \E[X_i W_i \mid \bvec{X}] \\
+& = n X_1 \E[ W_1 \mid X_1 ] \,.
+\end{align*}
+Note that
+\begin{align*}
+  \var( \E[W_1 \mid X_1] ) & = \var(W_1) - \E [\var(W_1 \mid X_1)] \,,
+\end{align*}
+so that if $\var(W_1 \mid X_1) < \var(W_1)$ with positive probability, then
+$\var(\E[W_1 \mid X_1)) > 0$.  In this case, $\E[W_1 \mid X_1] \neq 0$ with
+positive probability.
+
+Since
+\[
+\E[\hat{a} \mid \bvec{X} ] =
+\frac{a \| \bvec{X} \|^2 + ab \E\left[ \langle \bvec{X}, \bvec{W} \rangle \mid \bvec{X} \right]}
+{\|\bvec{X}\|^2}  \,,
+\]
+if $\var(W_1 \mid X_1) < \var(W_1)$ with positive probability, then $\E[\hat{a} \mid \bvec{X}] \neq a$
+with positive probability.  In the case of independence, $\E[ W_1 \mid X_1] = \E[ W_1 ] = 0$,
+whence $\E[ \hat{a} \mid \bvec{X}] = a$.
+\end{ProblemSol}
+
+\begin{Problem}{Freedman 4.12}
+Suppose $(X_i, \delta_i, \ep_i)$ are IID as triplets across subjects 
+$i = 1,\ldots, n$, where $n$ is large; and $X_i$, $\delta_i$, $\ep_i$ are mutually independent. 
+Furthermore, $\E(X_i) = \E(\delta_i) = \E( \ep_i) = 0$ while $\E( X_i^2) = \E( \delta_i^2) = 1$
+and $\E(\ep_i^2) = \sigma^2 > 0$. The response variable $Y_i$ is in truth this:
+\[
+Y_i = aX_i + \ep_i \,.
+\]
+We can recover $a$, up to random error, by running a regression of $Y_i$ on $X_i$ . 
+No intercept is needed. Why not?
+\end{Problem}
+\begin{ProblemSol}{Freedman 4.12}
+No intercept is needed because there is no constant term in the model equation.
+\end{ProblemSol}
+
+\begin{Problem}{Freedman 4.13}
+Let $c, d, e$ be real numbers and let $W_i = cX_i + d\delta_i + e \ep_i$. 
+Dick elects to run a regression of $Y_i$ on $X_i$ and $W_i$, again without an intercept. 
+Dick will use the coefficient of $X_i$ in his regression to estimate $a$. If $e = 0$, Dick still gets $a$, 
+up to random error-- as long as $d \neq 0$. Why? And what’s wrong with $d = 0$?
+\end{Problem}
+
+\begin{ProblemSol}{Freedman 4.13}
+If $e = 0$, then both $\bvec{X}$ and $\bvec{W}$ are independent of $\ep$, which is
+required in our assumptions for the OLS estimator to be unbiased.  If $d=e=0$, then
+$\bvec{X} = c\bvec{W}$, and the design matrix has less than full rank.
+\end{ProblemSol}
+
+\begin{Problem}{Freedman 4.14} (Continues questions 4.12 and 4.13.) 
+Suppose, however, that $e \neq 0$. Then Dick has a problem. To see the problem more clearly, assume that 
+$n$ is large. Let $Q = [\bvec{X} \bvec{W}]$ be the design matrix, i.e., the first column is the 
+$X_i$'s and the second column is the $W_i$'s. 
+Show that
+\begin{equation}
+\frac{1}{n} \bvec{Q}'\bvec{Q} \doteq
+\begin{bmatrix}
+\E(X_i^2) & \E(X_iW_i) \\
+\E(X_iW_i) & \E(W_i^2)
+\end{bmatrix} \,,
+\quad
+\frac{1}{n} \bvec{Q}'\bvec{Y} \doteq
+\begin{bmatrix}
+\E(X_iW_i) \\
+\E(W_iY_i)
+\end{bmatrix}
+\,.
+\end{equation}
+\begin{enumeratea}
+\item Suppose $a = c = d = e = 1$. 
+What will Dick estimate for the coefficient of $X_i$ in his regression? 
+\item Suppose $a = c = d = 1$ and $e = – 1$. What will Dick estimate for the coefficient of
+$X_i$ in his regression?
+\item A textbook on regression advises that, when in doubt, put more explanatory variables into the equation, rather  than fewer. What do you think?
+\end{enumeratea}
+\end{Problem}
+\begin{ProblemSol}{Freedman 4.14}
+\[
+\bvec{Q}'\bvec{Q} = 
+\begin{bmatrix}
+\bvec{X}'\bvec{X} & \bvec{X}'\bvec{W} \\
+\bvec{W}'\bvec{X} & \bvec{W}'\bvec{W}
+\end{bmatrix}
+\]
+The Law of Large numbers implies that
+\begin{align*}
+  \frac{1}{n} \langle \bvec{X}, \bvec{X} \rangle 
+  & = \frac{1}{n} \bvec{X}' \bvec{X} = \frac{1}{n}\sum_i X_i^2  \to \E X_1^2 = 1 \\
+  \frac{1}{n} \langle \bvec{X}, \bvec{W} \rangle
+  & = \frac{1}{n} \bvec{X}' \bvec{W} = \frac{1}{n}\sum_i X_i W_i \to \E X_1 W_1 = c \\
+  \frac{1}{n} \langle \bvec{W}, \bvec{W} \rangle
+  & = \frac{1}{n} \bvec{W}' \bvec{W} = \frac{1}{n}\sum W_i^2  \to \E W_1^1 = c^2 + d^2 + e^2\sigma^2
+\end{align*}
+Thus
+\[
+\frac{1}{n}\bvec{Q}'\bvec{Q} \doteq
+\begin{bmatrix}
+  \E(X_1 Y_1) \\
+  \E(W_1 Y_1)
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & c \\
+c & c^2 + d^2 + e^2\sigma^2
+\end{bmatrix}
+\]
+Similarly,
+\begin{equation}
+\frac{1}{n} \bvec{Q}' \bvec{Y}
+\doteq 
+\begin{bmatrix}
+a \\
+ac + \ep\sigma^2
+\end{bmatrix}
+\end{equation}
+Thus
+\[
+(\bvec{Q}'\bvec{Q})^{-1} \bvec{Q}'\bvec{Y}
+\doteq
+\frac{1}{d^2 + e^2 \sigma^2}
+\begin{bmatrix}
+c^2 + d^2 + e^2\sigma^2 & - c\\
+-c & 1
+\end{bmatrix}
+\begin{bmatrix}
+a \\ ac + e\sigma^2
+\end{bmatrix}
+=
+\begin{bmatrix}
+ a + \frac{(ae-c)e\sigma^2}{d^2} \\
+ \frac{e\sigma^2}{d^2}
+\end{bmatrix}
+\,.
+\]
+\begin{enumeratea}
+\item If $a = c =d = e = 1$, then the coefficient of $X_i$ will be, up to random error,
+$1$.
+\item If $a = c= d = 1$ and $e=-1$, then the coefficient of $X_i$ will be, up to random error,
+$a - 2\sigma^2$.
+\item
+If the variables you seek to include are correlated with the error, then adding these variables may bias your estimates of the other variables!  Thus caution is advised.
+\end{enumeratea}
+\end{ProblemSol}
+
+
+<<echo=false,results=hide>>=
+Stangle("homework3_sol.Rnw")
+@
+
+
+
+
+
+\end{document}

@@ -1,0 +1,163 @@
+\documentclass{amsart}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\DeclareMathOperator{\Cov}{\text{Cov}}
+\DeclareMathOperator{\Var}{\text{Var}}
+\DeclareMathOperator{\bin}{\text{Binomial}}
+\DeclareMathOperator{\bern}{\text{Bernoulli}}
+\DeclareMathOperator{\fish}{\text{Poisson}}
+\DeclareMathOperator{\uni}{\text{Uniform}}
+\DeclareMathOperator{\Norm}{\text{Norm}}
+\begin{document}
+	\author{Alex Thies}
+	\title{Final Exam Notes \\ Math 461 - Fall 2016}
+	\email{athies@uoregon.edu}
+
+	\maketitle
+	
+	\section{Discrete Random Variables}
+		\subsection{Summary}
+			\subsubsection{Probability Mass Function}
+			
+			It is important to keep in mind that with discrete random variables we compute the probability that a random variable is equal to a certain value, i.e., for $X$ discrete, we compute $p_{X}(x) = P(X = x)$, this is in contrast to the continuous case. Therefore, when asked to compute something like $P(X > n)$, we must actually compute $1 - \sum_{i=0}^{n-1}p_{X}(i)$; or for $P(X < n)$, we actually compute $\sum_{i=0}^{n-1} p_{X}(i)$.
+			
+				\subsubsection{Expectation} 
+				The expected value of a discrete random variable is computed with the following formula,
+					$$
+						E(X) = \sum_{x \in X} x p_{X}(x)
+					$$				
+					
+					When asked to compute a composition of $X$, we need only manipulate the \textit{weighted} $x$, rather than the argument of the probability mass function, e.g.,
+					\begin{align*}
+						E(X) &=  \sum_{x} x p(x); \\
+						E(X^{2}) &=  \sum_{x} x^{2} p(x); \\
+						E(1/X) &=  \sum_{x} x^{-1} p(x); \\
+						E(\log(X)) &= \sum_{x} \log(x) p(x).
+					\end{align*}
+					
+				\subsubsection{Variance}
+				The variance of a discrete random variable is the expected value of the squared difference between the expectation and the result, i.e.,
+					\begin{align*}
+						\Var(X) &= E\left[(X-\mu)^{2}\right] \\
+						&= \sum_{x \in X} (x - \mu)^{2} p_{X}(x) \\
+						&= \sum_{x} x^{2} p(x) - 2\mu\sum_{x} x p(x) + \mu^{2} \sum_{x} p(x) \\
+						&= E(X^{2}) - 2\mu^{2} + \mu^{2} \\
+						&= E(X^{2}) - \mu^{2}
+					\end{align*}
+					\begin{align*}
+						\Var(X) &= E(X^{2}) - \left[E(X)\right]^{2} \\
+						&= E(X^{2}) - E^{2}(X)
+					\end{align*}
+				Furthermore, note that 
+					$$
+						\Var(aX + b) = a^{2}\Var(X)
+					$$
+		
+		\subsection{Binomial Random Variables}
+		A Binomial Random Variable is the classic case of an experiment in which there is a binary value assigned to success of an event which is attempted $n$ times, with the probability of success being equal to some $p \in [0,1]$. The classic case is tossing a coin $n$ times, with probability of landing on heads equalling $p$; these values serve as the parameters of the random variable, i.e., $X \sim \bin(n,p)$.
+			\subsubsection{Probability Mass Function}
+			For $X \sim \bin(n,p)$,
+				$$
+					p_{X}(x) = P(X = x) = \binom{n}{x} p^{x} (1-p)^{n-x}
+				$$
+				
+			\subsubsection{Expectation of Binomial}
+			For $X \sim \bin(n,p)$,
+				$$
+					E(X) = 	np
+				$$
+				
+			\subsubsection{Variance of Binomial}
+			For $X \sim \bin(n,p)$,
+				$$
+					\Var(X) = np(1-p)
+				$$
+		
+		\subsection{Poisson Random Variables}
+		A Poisson Random Variable approximates a Binomial Random Variable given large $n$ and small $p$, the product, $\lambda$, of these values serve as the parameters of the random variable, i.e., $X \sim \fish(\lambda)$.
+				\subsubsection{Probability Mass Function}
+				For $X \sim \fish(\lambda)$, 
+					$$
+						p_{X}(x) = P(X=x) = \frac{\lambda^{x}e^{-\lambda}}{x!}
+					$$
+					
+				\subsubsection{Expectation, and Variance of Poisson} 
+				For $X \sim \fish(\lambda)$,
+					$$
+						E(X) = \Var(X) = \lambda.
+					$$
+					
+			\subsection{Bernoulli Random Variables}
+			A Bernoulli Random Variable is the special case where a Binomial Random Variable has one trial, e.g., coin tosses, independent events with binary outcome; thus for probability of success = $p$, 
+				$$
+					X \sim \bern(p) \Leftrightarrow X \sim \bin(1,p).
+				$$
+			
+				\subsubsection{Probability Mass Function}
+				For $X \sim \bern(p)$,
+					\begin{align*}
+						p(0) &= P(X = 0) = 1 - p, \\
+						p(1) &= P(X = 1) = p.
+					\end{align*}
+					
+				\subsubsection{Expectation}
+				For $X \sim \bern(p)$,
+					$$
+						E(X) = p.
+					$$
+				
+		\section{Continuous Random Variables}
+			\subsection{Summary}
+				\subsubsection{Probability Density Function (PDF)}
+				
+				\subsubsection{Cumulative Distribution Function (CDF)}
+			
+				\subsubsection{Expectation} 
+				The expected value of a continuous random variable is computed with the following formula,
+					$$
+						E(X) = \int_{-\infty}^{\infty} x f_{X}(x) \ dx
+					$$
+				Note that this is fairly similar to the expectation of a discrete random variable, but in the language of continous functions.			
+					
+				\subsubsection{Variance}
+			\subsection{Normal Random Variables}
+				\subsubsection{PDF and CDF}
+					
+				\subsubsection{Expecatation}
+					
+				\subsubsection{Variance}
+				
+				\subsubsection{Covariance}
+				
+				\subsubsection{Normal Approximation of Binomial Random Variable}
+				
+			\subsection{Standardized Normal}
+				\subsubsection{PDF and CDF}
+					
+				\subsubsection{Expecatation}
+					
+				\subsubsection{Variance}
+				
+				\subsubsection{Covariance}
+				
+			\subsection{Exponential Random Variables}
+				\subsubsection{PDF and CDF}
+				For $X \sim \exp(\lambda)$,
+					$$
+						f_{X}(x) = \begin{cases} \lambda e^{-\lambda x} & x \geq 0 \\ 0 & o/w \end{cases}
+					$$
+					$$
+						F_{X}(x) = P(X \leq x) = \int_{0}^{x} \lambda e^{-\lambda t} \ dt
+					$$
+					
+				\subsubsection{Expecatation}
+					
+				\subsubsection{Variance}
+				
+				\subsubsection{Covariance}
+				
+		\section{Jointly Distributed Random Variables}
+
+\end{document}

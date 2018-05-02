@@ -1,0 +1,301 @@
+\documentclass{amsart}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{enumerate,amssymb,graphicx,verbatim}
+\usepackage{fourier}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue,
+ citecolor=blue, urlcolor=red]{hyperref}
+
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\A}{{\mathcal A}}
+\newcommand{\B}{{\mathcal B}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\st}{\;:\;}
+\newcommand{\M}{{\mathcal M}}
+\newcommand{\var}{{\rm Var}}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\sd}{{\rm SD}}
+\newcommand{\bvec}[1]{{\boldsymbol #1}}
+\newcommand{\X}{\bvec{X}}
+\newcommand{\x}{\bvec{x}}
+\newcommand{\Y}{\bvec{Y}}
+\newcommand{\bbeta}{\bvec{\beta}}
+\newcommand{\Lin}{{\mathcal L}}
+\newcommand{\rss}{{\rm RSS}}
+
+
+\newenvironment{enumeratei}{\begin{enumerate}[\upshape (i)]}
+                           {\end{enumerate}}
+\newenvironment{enumeratea}{\begin{enumerate}[\upshape (a)]}
+                           {\end{enumerate}}
+
+\newenvironment{enumeraten}{\begin{enumerate}[\upshape 1.]}
+                           {\end{enumerate}}
+
+
+\newenvironment{Problem}[1]
+ {
+   \medskip
+   \noindent \textbf{\hypertarget{X:#1}{Problem #1.}}
+ }
+ {
+   %\hyperlink{Sol:#1}{Solution}
+ }
+
+\newenvironment{ProblemSol}[1]{
+  \begin{proof}[\hypertarget{Sol:#1}{Solution to Problem }\hyperlink{X:#1}{#1}]
+}
+{
+\end{proof}
+}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}
+\newtheorem{question}{Question}
+\newcommand{\LinkSol}[1]{                          %%
+\hfill \hyperlink{Sol:#1}{\framebox{Solution $\checkmark$}}}
+
+\title{Calculating Power of $F$-test}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\maketitle
+
+
+\section{Some Theory}
+
+We have our usual linear model:
+\[
+\bvec{Y} = \X \bbeta + \bvec{\ep}
+\]
+where it is assumed that $\bvec{\ep}$ is independent of
+$\bvec{X}$ and $\bvec{\ep} \sim N(\bvec{0}, \sigma^2I)$.
+
+We want to consider testing
+\begin{equation} \label{Eq:Hy}
+H_0 : \beta_{r+1} = \cdots = \beta_k = 0 \,.
+\end{equation}
+Let
+\begin{align*}
+  V_0 & = \Lin(\x_1,\ldots,\x_r) \\
+  V_1 & = \Lin(\x_1,\ldots,\x_k) \,.
+\end{align*}
+and if $\widehat{\bvec{Y}^{(i)}} = \Pi_{V_i} \bvec{Y}$,
+then
+\[
+\rss_i = \sum_{j=1}^n (Y_j - \widehat{Y_j^{(i)}})^2
+= \| \bvec{Y} - \widehat{\bvec{Y}^{(i)}} \|^2 \,.
+\]
+We know that under $H_0$,
+\[
+F =
+\frac{\|\widehat{\bvec{Y}^{(0)}} - \widehat{\bvec{Y}^{(1)}}\|^2/(k-r)}{\|\bvec{Y}-\widehat{\bvec{Y}^{(1)}}\|^2/(n-k)}
+= \frac{(\rss_0 - \rss_1)/(k-r)}{\rss_1/(n-k)}
+\]
+has an $F$-distribution with $k-r,n-k$ degrees of freedom.
+
+To carry out this test in $R$, fit two models and use
+\verb|anova| to compute the $F$-statistic.  See
+Table \ref{Tab:F} for an example.
+
+\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(xtable)}
+\hlstd{boston} \hlkwb{=} \hlkwd{read.table}\hlstd{(}\hlkwd{url}\hlstd{(}\hlstr{"http://pages.uoregon.edu/dlevin/DATA/BostonB.txt"}\hlstd{),}
+                    \hlkwc{header}\hlstd{=T)}
+\hlstd{g1} \hlkwb{=} \hlkwd{lm}\hlstd{(medv}\hlopt{~}\hlstd{.,}\hlkwc{data}\hlstd{=boston)}
+\hlstd{g2} \hlkwb{=} \hlkwd{lm}\hlstd{(medv}\hlopt{~}\hlstd{.}\hlopt{-}\hlstd{age}\hlopt{-}\hlstd{indus,}\hlkwc{data}\hlstd{=boston)}
+\hlkwd{xtable}\hlstd{(}\hlkwd{anova}\hlstd{(g2,g1),}\hlkwc{caption}\hlstd{=}\hlstr{"F test on coefficients of age and industry"}\hlstd{,}
+       \hlkwc{label}\hlstd{=}\hlstr{"Tab:F"}\hlstd{)}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Sun May  7 16:14:39 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrrr}
+  \hline
+ & Res.Df & RSS & Df & Sum of Sq & F & Pr($>$F) \\ 
+  \hline
+1 & 494 & 11081.36 &  &  &  &  \\ 
+  2 & 492 & 11078.78 & 2 & 2.58 & 0.06 & 0.9443 \\ 
+   \hline
+\end{tabular}
+\caption{F test on coefficients of age and industry} 
+\label{Tab:F}
+\end{table}
+
+
+
+If we want to compute probabilities for $F$ without the
+assumption of $H_0$ (e.g., to compute the power), we need:
+
+\begin{theorem}
+  The distribution of $F$ is a \emph{non-central}
+  $F$-distribution with degrees of freedom $k-r$ and
+  $n-k$ and with \emph{non-centrality parameter}
+  \[
+  \delta = \frac{ \| \Pi_{V_1 \cap V_0^\perp} \bvec{\theta} \|^2}{\sigma^2} \,,
+  \]
+  where $\bvec{\theta} = \E[\bvec{Y}\mid \X]$.
+\end{theorem}
+
+Note that
+\[
+\Pi_{V_1 \cap V_0^\perp} \bvec{\theta}
+= \sum_{j=r+1}^k \beta_j (\x_j - \Pi_{V_0} \x_k)
+= \sum_{j=j+1}^k \beta_k \x_j^\perp,
+\]
+where $\x_j^\perp = \x_j - \Pi_{V_0} \x_k$.
+
+Thus,
+\[
+\delta =
+\frac{1}{\sigma^2}\left[\sum_{j=r+1}^k \beta_j^2 \| \x_j^\perp \|^2
+  + 2\sum_{r+1 \leq i < j \leq k} \beta_i\beta_j \langle \x_i^\perp, \x_j^\perp \rangle \right]\,.
+\]
+
+\begin{question}
+  The parameter $\delta$ is ``unitless'', i.e. it does not
+  depend on the units of any of the variables.  Why?
+\end{question}
+
+To calculate $\delta$, we need to calculate $\x_j^\perp$.
+There are several ways to do this.   Note that
+$\x_j^\perp$ is the vector of residuals when performing OLS
+of $\x_j$ against $\x_1, \ldots, \x_r$.  (Why?)
+
+Suppose $\beta_{{\rm indus}} = 0.05$ and
+$\beta_{{\rm age}} = 0.001$.  Let us find $\delta$:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{ageperp} \hlkwb{=} \hlkwd{residuals}\hlstd{(}\hlkwd{lm}\hlstd{(age}\hlopt{~}\hlstd{.}\hlopt{-}\hlstd{medv}\hlopt{-}\hlstd{indus,}\hlkwc{data}\hlstd{=boston))}
+\hlstd{indusperp} \hlkwb{=} \hlkwd{residuals}\hlstd{(}\hlkwd{lm}\hlstd{(indus}\hlopt{~}\hlstd{.}\hlopt{-}\hlstd{medv}\hlopt{-}\hlstd{age,}\hlkwc{data}\hlstd{=boston))}
+\hlstd{de} \hlkwb{=} \hlstd{(}\hlnum{0.05}\hlopt{^}\hlnum{2}\hlopt{*}\hlkwd{sum}\hlstd{(ageperp}\hlopt{^}\hlnum{2}\hlstd{)} \hlopt{+} \hlnum{0.001}\hlopt{^}\hlnum{2}\hlopt{*}\hlkwd{sum}\hlstd{(indusperp}\hlopt{^}\hlnum{2}\hlstd{)}
+      \hlopt{+} \hlnum{2}\hlopt{*}\hlnum{0.001}\hlopt{*}\hlnum{0.05}\hlopt{*}\hlkwd{sum}\hlstd{(ageperp}\hlopt{*}\hlstd{indusperp))}\hlopt{/}\hlkwd{summary}\hlstd{(g1)}\hlopt{$}\hlstd{sigma}\hlopt{^}\hlnum{2}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Now we find the cut-off for the $F$-test, say with significance level $0.05$:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{fstar} \hlkwb{=} \hlkwd{qf}\hlstd{(}\hlnum{0.95}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{492}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+To find the power:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlnum{1} \hlopt{-} \hlkwd{pf}\hlstd{(fstar,}\hlnum{2}\hlstd{,}\hlnum{492}\hlstd{,}\hlkwc{ncp} \hlstd{= de)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.9322011
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\begin{question}
+The design matrix $\bvec{X}$ is said to have
+\emph{collinearity} if there are \emph{near} linear relationships among the columns.  Why is the power of the $F$-test
+limited when the variables $\x_j$ for $j > r$ are nearly
+collinear with the variables $\x_j$ for $j \leq r$.
+\end{question}
+
+\section{An example}
+
+This example concerns the \verb|crime| dataset, available
+via
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{crime} \hlkwb{=} \hlkwd{read.table}\hlstd{(}\hlkwd{url}\hlstd{(}\hlstr{"http://pages.uoregon.edu/dlevin/DATA/crime.txt"}\hlstd{),}\hlkwc{header}\hlstd{=T)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+A description of this data set is at
+
+\url{http://pages.uoregon.edu/dlevin/DATA/USCrimeDatafile.html}
+
+Here, the mortality rate \verb|R| is modelled as a function of the other variables.
+
+
+First, use OLS to fit a model including all the variables.
+
+\begin{question}
+Run a \verb|summary| of the OLS model.  Note the most of the coefficients are ``not significant''.
+Test the hypothesis that none of the ``not significant'' coefficients are non-zero.  What do you find?  Discuss.
+\end{question}¯
+
+\begin{question}
+In the first \verb|summary| of the full OLS model, the coeffiecients of \verb|Ex0| and \verb|Ex1| have different signs.
+Looking at the description of the variables, does this make sense?  How would you explain this?
+\end{question}
+\begin{question}
+  In the above question, running the \verb|summary| command performed several tests.  What were these tests?  Afterwards, the question asked you to perform another test, \emph{based on the results} given in \verb|summary|.  Does this matter in interpreting the results of the second test?
+\end{question}
+
+Now, consider the test that the
+coefficients of both \verb|Ex1| and \verb|U1| are zero.
+
+\begin{question}
+What is the power of this test when $\beta_{{\rm Ex1}} = -1$
+and $\beta_{{\rm U1}} = -1$.
+\end{question}
+First, carry out the $F$-test that these two coefficients are zero.
+
+
+\end{document}

@@ -1,0 +1,172 @@
+\documentclass[handout]{beamer}
+\usepackage{txfonts}
+\usepackage[utf8]{inputenx} \input{ix-utf8enc.dfu}
+\usepackage{amsmath,pifont,amsfonts,amsthm,graphics,epsfig,verbatim}
+\usefonttheme{serif}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\inprob}{\stackrel{{\rm Pr}}{\longrightarrow}}
+\newcommand{\Lin}{{\mathcal L}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\bvec}[1]{{\boldsymbol #1}}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\title{The Least Squares Line}
+\subtitle{Math 463, Spring 2017, University of Oregon}
+\author{David A. Levin}
+\date{April 5, 2017}
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{small}
+<<fig=TRUE,include=FALSE,label=fig1>>=
+
+elas.url = url(
+  "http://pages.uoregon.edu/dlevin/DATA/elastic2.txt")
+elas = read.table(elas.url,header=T)
+plot(distance~stretch, data=elas, pch=19)
+@
+<<fig=TRUE,echo=FALSE,include=FALSE,label=fig1b>>=
+elas.lm <- lm(distance~stretch, data=elas)
+plot(distance~stretch, data=elas, pch=19)
+abline(elas.lm)
+@
+
+\end{small}
+\only<1>{\centerline{\includegraphics[width=3in]{models-fig1}}}
+\only<2>{\centerline{\includegraphics[width=3in]{models-fig1b}}}
+\end{frame}
+
+\begin{frame}
+\frametitle{Least-squares line}
+\begin{itemize}
+\item A line may summarize bivariate data.  How to select a line?
+\item Technique going back to Legendre (1805) and Gauss (1809).
+\item For a given line defined by intercept $b_0$ and slope $b_1$
+  (by the equation $y = b_0 + b_1 x$), define the $i$-th \textbf{residual}
+  to be 
+    \[
+      e_i(b_0,b_1) = b_0 + b_1 x_i - y_i \,,
+    \]  
+  the difference between the value of the line at $x_i$ and $y_i$.
+\item Consider the objective function given by the sum-of-squared residuals:
+  \[
+    s(b_0,b_1) = \sum_{i=1}^n e_i(b_0,b_1)^2
+  \]
+\item The least-squares line has itercept and slope $\hat{b}_0$ and $\hat{b}_1$ minimizing the sum-of-squared residuals.
+  \[  
+    (\hat{b}_0,\hat{b}_1) = \arg\min_{b_0,b_1} S(b_0,b_1) \,.
+  \]  
+\end{itemize}
+\end{frame}
+\begin{frame}
+<<echo=false, fig=TRUE, include=false,label=ls>>=
+plot(distance~stretch, data=elas, pch=19,cex=0.15,ylim=c(40,300))
+abline(elas.lm,col="red")
+segments(elas$stretch,fitted.values(elas.lm),elas$stretch,elas$distance,col="red")
+b0=-130;b1=6.5
+abline(b0,b1,col="blue")
+fitb = b0 + b1*elas$stretch
+segments(elas$stretch+0.1,fitb,elas$stretch+0.1,elas$distance,col="blue")
+
+@
+\centerline{\includegraphics[width=4in]{intro2-ls}}
+\end{frame}
+
+\begin{frame}
+
+\begin{align*}
+\frac{\partial}{\partial b_0} S(b_0,b_1)
+& = 2\sum_{i=1}^n (b_0 + b_1 x_i - y_i) \\
+\frac{\partial}{\partial b_1} S(b_0,b_1)
+& = 2\sum_{i=1}^n (b_0 + b_1 x_i - y_i)x_i
+\end{align*}
+Setting to $0$, we find
+\begin{align*}
+  b_0 + b_1 \bar{x} & = \bar{y} \\
+  b_0\bar{x} + b_1 \bar{x^2} & = \bar{xy}
+\end{align*}
+Thus the solution $\hat{b}_1$ of the above is
+\[
+\hat{b}_1  = \frac{\bar{xy} - \bar{x}\bar{y}}{\bar{x^2} - \bar{x}^2}
+= \frac{r}{s_x s_y}{s_x^2} = r \frac{s_y}{s_x},
+\]
+where
+\[
+r = \frac{\frac{1}{n-1}\sum (x_i-\bar{x})(y_i - \bar{y})}{s_x s_y} \]
+is the \textbf{sample correlation}.
+
+\end{frame}
+\begin{frame}
+Solving for $\hat{b}_0$ yields
+\[
+\hat{b}_0 = \bar{y} - \hat{b}_1 \bar{x}
+\]
+Thus the equation for the line is
+\[
+y = \bar{y} + r\frac{s_y}{s_x}(x - \bar{x}) \,.
+\]
+From this form, we see that if the unit for $x$ is $s_x$ and the unit for $y$ is $s_y$, then for every unit increase in $x$ above $\bar{x}$, there is an increase of $r$ units in $y$ above $\bar{y}$.
+
+The $i$-th \textbf{fitted value} is defined as 
+\[
+\hat{y}_i = \hat{b}_0 + \hat{b}_1 x_i \,,
+\]
+the value of the line at $x_i$.  The $i$-th \textbf{residual} is
+\[
+e_i = y_i - \hat{y}_i
+\]
+
+\end{frame}
+\begin{frame}
+\frametitle{Least-squares}
+\begin{itemize}
+\item The least-squares line is determined by the \textbf{data} $\{(x_i,y_i)\}_{i=1}^n$, and requires no model for how that data was generated.  It is observable.
+\item The least-squares line may or may not be a useful summary of the data.
+\item The \textbf{projection} of the $n$-dimension vector $(y_1,\ldots,y_n)$ to the two-dimensional vector space 
+$\Lin \subset \R^n$ spanned by the vectors $(1,1,\ldots,1)$ and 
+$(x_1,\ldots,x_n)$ is $(\hat{y}_1,\ldots,\hat{y}_n)$.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Computing the LS line in R}
+The function \verb|lm| computes (among other things) the intercept and slope of the least-squares line:
+\begin{tiny}
+<<>>=
+elas.lm <- lm(distance~stretch, data=elas)
+summary(elas.lm)
+@
+\end{tiny}
+R (and other statistical software) is happy to compute many things for you. Don't use them because they are there.
+My phone is happy to correct my typing, too.
+\end{frame}
+
+
+\begin{frame}
+Never include raw output in your write-up.  Instead,
+format any tables.  For example:
+
+A linear model of the form
+\[
+y_i = b_0 + b_1 x_i + \ep_i
+\]
+was fit to the data.  The least-squares 
+$b_0$ and $b_1$ are given in the column labeled ``Estimate''
+in Table \ref{Tab:Elas}.
+<<echo=false, results=tex>>=
+library(xtable)
+xtable(summary(elas.lm), digits=2, label="Tab:Elas", caption = "Coefficient and standard errors")
+@
+
+\end{frame}
+
+
+<<echo=false,results=hide>>=
+Stangle("intro2.Rnw")
+@
+\end{document}
+
+

@@ -1,0 +1,109 @@
+\documentclass[addpoints]{exam}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\pagestyle{headandfoot}
+	\firstpageheader{Math 461}{Exam 2}{21 November, 2016}
+	\firstpageheadrule
+	\firstpagefootrule
+	\firstpagefooter{}{Page \thepage\ of \numpages}{}
+	\runningheadrule
+	\runningheader{Math 461}{Exam 2}{21 November, 2016}
+	\runningfootrule
+	\runningfooter{}{Page \thepage\ of \numpages}{}	
+	
+\begin{document}
+	\begin{coverpages}
+		\begin{center}
+			\Large{Math 461 - Fall 2016} \\
+			\Large{Exam 2} \\
+			\Large{21 November, 2016}
+		\end{center}
+		\vspace{0.1in}
+		
+		\begin{center}
+			\makebox[0.5\textwidth]{Name:\enspace\hrulefill}
+			\vspace{0.1in}
+		
+			\makebox[0.5\textwidth]{Student ID:\enspace\hrulefill}	
+			\vspace{0.1in}
+		\end{center}
+		
+		\textbf{Instructions:} Take this exam without cheating. Read the directions to each question carefully. Show \textbf{ALL} of your work in order to receive full credit; you can only receive partial credit if it is clear what your thought process is. Solutions with no work will receive \textbf{NO} credit. Please write solutions in a legible manner, and in complete sentences where appropriate. You may use a pencil, eraser, and your brain to help you complete the solutions. 
+		
+		By signing below, you certify that you have not used any electronic or written assistance in order to complete this exam, and affirm that you are aware of the University of Oregon Student Conduct Code, with regard to cheating and plagiarism.
+		
+		Good Luck!
+		
+		\begin{center}
+			\makebox[0.5\textwidth]{Sign here:\enspace\hrulefill}	
+			\vspace{0.1in}
+		\end{center}
+	
+		\begin{center}
+			\gradetable[v][questions]
+		\end{center}
+		\vspace{0.5in}
+	\end{coverpages}
+	
+	\begin{questions}	
+		\question[12] Let $\zeta (r) = \sum_{k=1}^{\infty} \frac{1}{k^{r}}$. Let $X$ be a random variable with the probability mass function
+			$$
+				p(k) = \begin{cases}\frac{1}{\zeta (4)} \frac{1}{k^{4}} & k=1,2,\dots \\ 0 & \text{otherwise} \end{cases}
+			$$
+			Below you may express your answers in terms of the values of $\zeta$.
+			\begin{parts}
+				\part Find $E(X)$
+				\part Find Var$(X)$.
+				\part Find $E(\frac{1}{X})$.
+			\end{parts}
+		\vspace{\stretch{1}}
+			
+		\question[8] Find, \textbf{approximately}, the chance that a fair coin lands ``heads'' at least 45 times in 100 independent tosses. Your answer should be a real number given to two decimals of accuracy.
+		\vspace{\stretch{1}}
+		\newpage
+
+		\question[8] Let $U$ be a uniform $[-1,1]$ random variable, and let $Y = U^{2}$.
+			\begin{parts}
+				\part Find the cdf of $Y$.
+				\part Find the pdf of $Y$.
+			\end{parts}
+		\vspace{\stretch{1}}
+		
+		\question[8] Suppose that the probability of having a bicycle accident on my commute to and from work is $0.001$. I bicycle 5 days a week for 48 week 
+			\begin{parts}
+				\part[1] How many arrangements of balls into boxes are possible?
+				\part[2] Find the probability that the first box is empty. What about the probability that the fourth box is empty?
+			\end{parts}
+		\vspace{\stretch{1}}
+		\newpage
+			
+		\question Suppose that,
+			\begin{enumerate}
+				\item[] \begin{enumerate}[(i)]
+	 				\item[•] the probability of rain tomorrow, given that it rains today, equals 0.8,
+					\item[•] the probability of rain tomorrow, given that it does not rain today, equals 0.5, and
+					\item[•] the probability of rain today is 0.4.		
+				\end{enumerate}				
+			\end{enumerate}
+			\begin{parts}
+				\part[2] Find the probability that it rains today and tomorrow.
+				\part[2] Find the probability that it rains tomorrow.
+				\part[2] Find the chance that it rains today or tomorrow.
+			\end{parts}
+			\newpage
+			
+		\question[5] Suppose a disease occurs with probability 0.01 in people with genotype $A$, and occurs with probability 0.10 in people with genotype $B$. The disease does not occur in people with genotype not $A$ or not $B$. The frequency of genotype $A$ is the population is 0.70, and the frequency of genotype $B$ is 0.20. A person is selected at random from the population. Given that this person has the disease, what is the probability that they are of genotype $B$?
+		\vspace{\stretch{1}}
+		
+		\question[4] \
+			\begin{parts}
+				\part Suppose 10 balls are thrown at a target. Each ball has chance 0.2 of hitting the target, and distinct throws are independent of one another. Find the probability that there are exactly 3 balls that hit the target.
+				
+				\part  Suppose that balls are thrown at the target until a ball hits the target. Find the probability that it will take 3 throws before the target is hit.
+			\end{parts}
+			\vspace{\stretch{1}}
+	\end{questions}
+\end{document}

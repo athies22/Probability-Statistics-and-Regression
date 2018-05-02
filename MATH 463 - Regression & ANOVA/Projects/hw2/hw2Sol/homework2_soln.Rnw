@@ -1,0 +1,373 @@
+\documentclass{amsart}
+\usepackage{enumerate,amssymb,graphicx,verbatim}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue,     
+ citecolor=blue, urlcolor=red]{hyperref}
+
+\newcommand{\E}{{\mathcal E}}
+\newcommand{\A}{{\mathcal A}}
+\newcommand{\B}{{\mathcal B}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\X}{{\boldsymbol X}}
+\newcommand{\st}{\;:\;}
+\newcommand{\M}{{\mathcal M}}
+\newcommand{\var}{{\rm Var}}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\sd}{{\rm SD}}
+\newcommand{\bvec}[1]{{\boldsymbol #1}}
+\newcommand{\bbeta}{\bvec{\beta}}
+\newcommand{\bX}{\bvec{X}}
+\newcommand{\ssreg}{{\rm SS}_{{\rm Reg}}}
+\newcommand{\ssr}{{\rm SS}_{{\rm Res}}}
+\newcommand{\sst}{{\rm SS}_{{\rm Tot}}}
+\DeclareMathOperator{\se}{SE}
+
+\newenvironment{enumeratei}{\begin{enumerate}[\upshape (i)]}
+                           {\end{enumerate}}
+\newenvironment{enumeratea}{\begin{enumerate}[\upshape (a)]}
+                           {\end{enumerate}}
+
+\newenvironment{enumeraten}{\begin{enumerate}[\upshape 1.]}
+                           {\end{enumerate}}
+
+
+\newenvironment{Problem}[1]
+ {
+   \medskip
+   \noindent \textbf{\hypertarget{X:#1}{Problem #1.}}
+ }
+ {
+   %\hyperlink{Sol:#1}{Solution}
+ }
+
+\newenvironment{ProblemSol}[1]{
+  \begin{proof}[\hypertarget{Sol:#1}{Solution to Problem }\hyperlink{X:#1}{#1}]
+}
+{
+\end{proof}
+}
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}
+
+\newcommand{\LinkSol}[1]{                          %%      
+\hfill \hyperlink{Sol:#1}{\framebox{Solution $\checkmark$}}}
+
+\title{Homework 2 -- Due April 25}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\maketitle
+
+
+\section{A regression model}
+
+In this part, you will replicate Yule's regression equation for the metroplitan unions, 1871-81.  See Chapter 1 of Freedman (2009) for a discussion.  Fix the design matrix $\X$ at the values reported in Table 3 there, available at 
+
+\url{http://pages.uoregon.edu/dlevin/DATA/yule.txt}
+
+(Subtract $100$ from each entry to get the percent changes.)  Yule assumed 
+\[
+\Delta \text{Paup}_i = a + b \cdot \Delta \text{Out}_i +
+c \cdot \Delta \text{Old}_i + d \cdot \Delta \text{Pop}_i + \ep_i
+\]
+for 32 metropolitan unions $i$.  For now, suppose the errors $\ep_i$ are IID, with mean $0$ and variance $\sigma^2$.
+\begin{enumeratea}
+\item Estimate $a,b,c,d$ and $\sigma^2$.
+\item Compute the SE's.
+\item Are these SEs exact, or approximate?
+\item Plot the residuals against the fitted values. (This is often a useful diagnostic: If you see a pattern, something is wrong with the model.  You can also plot residuals against other variables, or time, or ...)
+\end{enumeratea}
+
+\begin{proof}[Solution]
+The estimated coefficients and standard errors are given in Table \ref{Tab:Coef}.
+<<echo=false, results=tex>>=
+library(xtable)
+yule = read.table(url("http://pages.uoregon.edu/dlevin/DATA/yule.txt"),header=T)-100
+fit1 = lm(paup~out+old+pop, data=yule)
+xtable(summary(fit1)$coefficients[,1:2],caption="coefficients and standard errors",label="Tab:Coef")
+@
+The estimate of $\sigma$ is $\Sexpr{round(summary(fit1)$sigma,3)}$.  The standard errors are 
+estimates, since they use $\hat{\sigma}$ instead of $\sigma$.
+
+<<echo=false, fig=TRUE, include=false, label=residuals>>=
+plot(residuals(fit1)~fitted.values(fit1),ylab="residuals",xlab="fitted values", pch=19)
+@
+
+The residuals against fitted values are shown in Figure \ref{Fig:Residuals}.
+There is no obvious structure in the residuals when plotted against the fitted values.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=4in]{homework2_soln-residuals}
+\caption{Residuals vs.\ fitted values. \label{Fig:Residuals}}
+\end{center}
+\end{figure}
+\end{proof}
+\section{The $t$-Test}
+Make a $t$-test of the null hypothesis that $b=0$.  What do you conclude?  If you were arguing with Yule, would you want to take the position that $b=0$ and he was fooled by chance variation?
+
+In this part, you will do a simulation to investigate the distribution of $t = \hat{b}/\text{SE}$, under the null hypothesis that $b=0$.
+
+\begin{enumeratea}
+\item Set the parameters in Yule's equation as follows: 
+\[
+a = -40,\; b = 0,\; c= 0.2,\; d=-0.3,\; \sigma = 15 \,.
+\]
+<<echo=false>>=
+attach(yule)
+simyule = function(a,b,c,d,s){
+  y = a + b*out + c*old + d*pop + rnorm(32,0,sd=s)
+  f = lm(y~out+old+pop, data=yule)
+  c(summary(f)$coef[2,1:3],summary(f)$sigma)
+}
+@
+<<echo=false>>=
+M = matrix(rep(1,4000),nrow=1000)
+for(i in 1:1000){
+  M[i,] = simyule(-40,0,0.2,-0.3,15)
+}
+@
+<<echo=false, fig=TRUE, include=false, label=tdist>>=
+hist(M[,3],prob=TRUE, ylim=c(0,0.5))
+x = seq(-4,4,0.02)
+y = dt(x,28)
+y2 = dnorm(x)
+lines(x,y)
+lines(x,y2,col="blue")
+@
+<<echo=false, fig=TRUE, include=false, label=scatter>>=
+plot(M[,1],M[,4],xlab="b-hat",ylab="sigma-hat", pch=19, cex=0.3)
+@
+Fix the design matrix $\X$ as in Part 1.   Generate $32$ $N(0,\sigma^2)$ errors and plug them into the equation
+\[
+\Delta \text{Paup}_i = -40 + 0\cdot \Delta \text{Out}_i + 0.2 \times \Delta \text{Old}_i - 0.3 \times \Delta \text{Pop}_i + \ep_i \,,
+\]
+to get simulated values for $\Delta \text{Paup}_i$ for $i=1,2,\ldots,32$.
+\item Regress the simulated $\Delta \text{Paup}_i$ on 
+$\Delta \text{Out}, \Delta\text{Pop}$ and $\Delta \text{Old}$.  Calculate $\hat{b}, {\rm SE}(\hat{b})$, and $t$.
+\item Repeat (b) and (c) $1000$ times.
+\item Plot a histrogram for the $1000$ $\hat{b}$'s, a scatter diagram for the 1000 pairs $(\hat{b},\hat{\sigma})$ and a histogram for the $1000$ $t$'s.
+\item What is the theoretical distribution of $\hat{b}$?  of $\hat{\sigma^2}$? of $t$?  How close is the theoretical dsitribution of $t$ to normal?
+\item Calculate the mean and SD of the $1000$ 
+$\hat{b}$'s.  How does the mean compare to the true $b$  (``True'' in the simulation.)  How does does the SD compare to the true SD for $\hat{b}$?
+<<echo=false>>=
+mb = round(mean(M[,1]),4)
+sdb = round(sd(M[,1]),4)
+X = model.matrix(fit1)
+bcov = round(solve(t(X)%*%X)*15^2,3)
+@
+The mean and SD of the simulated $\hat{b}$'s are
+$\Sexpr{mb}$ and $\Sexpr{sdb}$, respectively.
+The true $b$ is $0$, while the true SD is
+\[
+\sqrt{(\bvec{X}'\bvec{X})^{-1}_{2,2}} 15
+= \Sexpr{round(sqrt(bcov[2,2]),3)} \,.
+\]
+
+
+\item Would it matter if you set the parameters differently?  For instance, you could try $a=10, b=0, c=0.1, d=-0.5$ and $\sigma = 25$.   What if $b = 0.5$?  What if $\ep_i \sim \sigma \cdot (\chi_5^2 - 5)/\sqrt{10}$?  The simulation in this exercise is for the level of the test.  How would you do a simulation to get the power of the test?
+\end{enumeratea}
+\begin{proof}[Solution]
+
+The $t$-tests for all the coefficients are given in Table \ref{Tab:ttest} below.
+
+<<echo=false, results=tex>>=
+xtable(summary(fit1)$coefficients[,3:4],caption="t test",label="Tab:ttest")
+@
+
+If the modelling assumptions are correct, then it is highly unlikely,
+under the assumption that $b=0$, that the observed $t$-statistic 
+(corresponding to the test of $H_0: b = 0$) would be
+as large as the value recorded value of 5.56.
+
+The scatterplot of $(\hat{b},\hat{\sigma})$ for the simulations is given in Figure \ref{Fig:bsscat}. Note that there is no apparent correlation, as we know that $\hat{b}$ and $\hat{\sigma}$ are independent as random variables.
+The histogram for the $t$-statistics is given in Figure \ref{Fig:tdist}.  The $t$ density is in black, and a Normal density is in blue.  The densities are close to one another, and each approximates the data well.
+
+The histogram for the simulated $\hat{\beta}$'s is given in Figure \ref{Fig:bhat}.  The theoretical distribution of $\hat{\beta}$ is Normal with mean $0$ and
+\[
+{\rm sd}(\hat{\beta}) = \sigma \sqrt{ (\bvec{X}'\bvec{X})^{-1}_{2,2}} = \Sexpr{round(sqrt(bcov[2,2]),3)} \,.
+\]
+<<echo=false, include=false, fig=true, label=bhat>>=
+hist(M[,1],prob=T)
+bsd = sqrt(bcov[2,2])
+x = seq(-1,1,0.005)
+y = dnorm(x,0,bsd)
+lines(x,y)
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{homework2_soln-scatter}
+\caption{Plot of $(\hat{b},\hat{\sigma})$ for the 1000 simulations.
+\label{Fig:bsscat}}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{homework2_soln-tdist}
+\caption{Histogram of simulated $t$-statistics. \label{Fig:tdist}}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{homework2_soln-bhat}
+\caption{Histogram of simulated $\hat{\beta}$. \label{Fig:bhat}}
+\end{center}
+\end{figure}
+
+The distribution of the estimates $\hat{b}$ do not depend on the
+other coefficients, but does depend on $\sigma$.  The distribution
+of the $t$-statistic does not depend on $\sigma$.
+
+The distribution of the estimates \emph{does} depend on the error distribution.
+However, as seen from Figure \ref{Fig:bhat2}, with an error distribution with
+mean $0$ and sd $\sigma$, which is \emph{not} normal, the resulting distribution of the estimates is close to Normal.  (The simulation here used the centered and scaled chi-squared distribution for the errors.)  The estimates tend to have Normal distributions if the sample size is large (here the sample size is moderate at $32$), due to the Central Limit Theorem.
+
+
+<<echo=false>>=
+attach(yule)
+simyule2 = function(a,b,c,d,s){
+  y = a + b*out + c*old + d*pop + s*(rchisq(n=32,df=5)-5)/sqrt(10)
+  f = lm(y~out+old+pop, data=yule)
+  c(summary(f)$coef[2,1:3],summary(f)$sigma)
+}
+@
+<<echo=false>>=
+M2 = matrix(rep(1,4000),nrow=1000)
+for(i in 1:1000){
+  M2[i,] = simyule2(-40,0,0.2,-0.3,15)
+}
+@
+<<echo=false, include=false, fig=true, label=bhat2>>=
+hist(M2[,1],prob=T)
+bsd = sqrt(bcov[2,2])
+x = seq(-1,1,0.005)
+y = dnorm(x,0,bsd)
+lines(x,y)
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{homework2_soln-bhat2}
+\caption{$\hat{b}$ from simulations with scaled chi-squared errors.
+\label{Fig:bhat2}}
+\end{center}
+\end{figure}
+
+To estimate the power of the test: make $N$ (large) simulations
+of the $t$-statistic, and take the fraction of simulations with
+$t > t^\star$ as the estimate of the probability of rejecting 
+the null, i.e., as an estimate of the power.
+
+
+\end{proof}
+
+\clearpage
+
+\section{Balance scale}
+
+A two balance scale reports the difference between the
+weights of the right and left plates, plus a random measurement error.
+
+Suppose you have $4$ objects whose weights you wish to estimate with the scale, and are allowed $12$ measurements.  One approach is to measure each weight alone $3$ times.
+(How would you then estimate the four weights with this information?)
+Is there a better way to use the $12$ allowed measurements?
+
+Suppose that
+\[
+x_{i,j} =
+\begin{cases}
++1 & \text{if weight $j$ is included on the right plate in the $i$-th measurement} \\
+-1 & \text{if weight $j$ is included on the left plate in the $i$-th measurement}
+\end{cases}
+\]
+Then the model we are investigating is
+$\bvec{Y} = \bvec{X} \bvec{\beta} + \bvec{\ep}$,
+where $\bvec{Y}$ is the vector of the $12$ scale readings,
+$\bvec{\beta} = (\beta_1,\beta_2,\beta_3,\beta_4)'$ is the vector
+of the true weight of the four objects, and $\bvec{\ep}$ is
+the vector of $12$ measurement errors. The vector equation
+$\bvec{Y} = \bvec{X} \bvec{\beta} + \bvec{\ep}$ is equivalent to the
+12 individual equations
+\[
+Y_i = \beta_1 x_{i,1} + \beta_2 x_{i,2} + \beta_3 x_{i,3} + \beta_4 x_{i,4}
++ \ep_i, \quad i=1,2,\ldots,12 \,.
+\]
+For example, if in the first measurement we put weight $1$ on the right plate and weight $2$ on the left, then the first reading of the scale is
+\[
+Y_1 = \beta_1 - \beta_2 + \ep_1 \,.
+\]
+
+
+Find a design matrix $\bvec{X}$ that does a better job of
+estimating $\bvec{\beta}$ than the design matrix corresponding to measuring each wieght $3$ times alone.  (What is the former matrix?)  Discuss the choice of
+design matrix.
+
+\begin{proof}[Solution]
+The design matrix for the procedure described above is
+\begin{equation}
+\bvec{X}=
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 \\
+\end{bmatrix}
+\end{equation}
+We have
+\[
+(\bvec{X}'\bvec{X})^{-1} =
+\frac{1}{3} I_4 \,.
+\]
+We want to find a design matrix with smaller values of $(\bvec{X}'\bvec{X})^{-1}$.
+
+Consider
+\[
+\bvec{X}
+=
+\left(
+\begin{array}{cccc}
+ 1 & 1 & 1 & 1 \\
+ 1 & 1 & 1 & -1 \\
+ 1 & 1 & 1 & 0 \\
+ 1 & 1 & -1 & 1 \\
+ 1 & 1 & -1 & -1 \\
+ 1 & 1 & -1 & 0 \\
+ 1 & -1 & 1 & 1 \\
+ 1 & -1 & 1 & -1 \\
+ 1 & -1 & 1 & 0 \\
+ 1 & -1 & -1 & 1 \\
+ 1 & -1 & -1 & -1 \\
+ 1 & -1 & -1 & 0 \\
+\end{array}
+\right)
+\]
+For this design matrix,
+\[
+(\bvec{X}'\bvec{X})^{-1}=
+\left(
+\begin{array}{cccc}
+ \frac{1}{12} & 0 & 0 & 0 \\
+ 0 & \frac{1}{12} & 0 & 0 \\
+ 0 & 0 & \frac{1}{12} & 0 \\
+ 0 & 0 & 0 & \frac{1}{8} \\
+\end{array}
+\right)
+\,.
+\]
+Thus, the variances of the components of $\hat{\bvec{\beta}}$ are smaller for this
+design matrix than the first.
+\end{proof}
+
+<<echo=false,results=hide>>=
+Stangle("homework2_soln.Rnw")
+@
+
+\end{document}

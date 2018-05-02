@@ -1,0 +1,139 @@
+\documentclass{beamer}
+\usepackage{txfonts}
+\usepackage[utf8]{inputenx} \input{ix-utf8enc.dfu}
+\usepackage{amsmath,pifont,amsfonts,amsthm,graphics,epsfig,verbatim}
+\usefonttheme{serif}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\inprob}{\stackrel{{\rm Pr}}{\longrightarrow}}
+\newcommand{\Lin}{{\mathcal L}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\bvec}[1]{{\boldsymbol #1}}
+\newcommand{\one}{\bvec{1}}
+\renewcommand{\P}{{\mathbb P}}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\title{Simulation}
+\subtitle{Math 463, Spring 2017, University of Oregon}
+\author{David A. Levin}
+\date{April 24, 2017}
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Simulation}
+
+Model:
+\[
+\bvec{Y} = \bvec{X} \bvec{\beta} + \bvec{\ep} \,.
+\]
+\begin{itemize}
+\item
+Use $\hat{\bvec{\beta}} = (\bvec{X}'\bvec{X})^{-1}\bvec{X}' \bvec{y}$
+to estimate $\bvec{\beta}$.
+\item
+Since $\bvec{\ep}$ is assumed to be a random variable, the data is
+assumed to be observed values of a random vector $\bvec{Y}$.
+\item
+\textbf{Hypothetical} experiments generating other \textbf{potential}
+realizations of $\bvec{Y}$ would generate different values of
+$\hat{\bvec{\beta}}$.
+\item
+To understand the variability of $\hat{\bvec{\beta}}$, we can use the
+computer to carry out these hypothetical experiments.
+\item
+The \textbf{empirical distribution} of these experiments will
+approximate the \textbf{theoretical distribution} of
+$\hat{\bvec{\beta}}$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{itemize}
+    \item If $w_1,\ldots,w_R$ are the independent realizations of a
+      random variable $W$, then the histogram of the \textbf{numbers}
+      $\{w_1,\ldots,w_R\}$ is an approximation to the pdf of $W$.
+    \item This follows since the Law of Large Numbers implies that
+    for any interval $I$,
+      \begin{align*}
+        \text{proportion of $\{w_i\}$ in $I$} & = \frac{1}{R} \sum_{i=1}^R \one\{W_i \in I\}
+          \\
+          & \stackrel{{\rm Pr}}{\longrightarrow} 
+          \E(\one\{W_i \in I\}) = \P(W_i \in I)
+      \end{align*}
+  \item Can use simulation of $\{w_1,\ldots,w_R\}$ to approximate pdf of
+    $W$.
+  \item Can use this approach to approximate the distribution of $\hat{\beta_i}$
+  \end{itemize}
+\end{frame}
+      
+
+
+\begin{frame}[fragile]
+<<>>=
+set.seed(101)
+R = 100
+@
+
+<<tstatgen>>=
+tstat = 1:R
+x1 = rnorm(10,0,3)
+x2 = rnorm(10,0,5)
+for (i in 1:100){
+  ep = rnorm(10,5)
+  y = 3 + 0*x1 + 5*x2 + ep
+  tstat[i] = summary(lm(y~x1+x2))$coef[2,3]
+}
+
+@
+
+\end{frame}
+
+\begin{frame}[fragile]
+<<tstatgen2,include=false,fig=TRUE,label=hist>>=
+hist(tstat,prob=T,nclass=12)
+x = seq(-4,4,by=0.02)
+y = dt(x,df=7)
+lines(x,y)
+@
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\includegraphics[width=4in]{sim-hist}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{R functions}
+<<fig=T,include=F,label=nonnormal>>=
+x1 = rnorm(10,0,3)
+x2 = rnorm(10,0,5)
+
+f = function(R,x1,x2){
+  tval = 1:R
+  for(i in 1:R){
+    y = 3 + 5*x2 + rexp(10,rate=1)
+    tval[i]=summary(lm(y~x1+x2))$coef[2,3]
+  }
+  tval
+}
+
+hist(f(250,x1,x2),prob=T)
+@
+
+\end{frame}
+
+\begin{frame}
+\includegraphics[width=3in]{sim-nonnormal}
+\end{frame}
+
+<<echo=false, results=hide>>=
+Stangle("sim.Rnw")
+@
+
+\end{document}
+
+
+\end{document}

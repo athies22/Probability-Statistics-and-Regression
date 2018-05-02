@@ -1,0 +1,380 @@
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[noae]{Sweave}
+\usepackage{amsmath,amsthm,graphicx,enumerate,hyperref,verbatim,fourier}
+\theoremstyle{definition}
+\newcommand{\ep}{\varepsilon}
+\renewcommand{\P}{{\mathbb P}}
+\newcommand{\bvec}[1]{{\boldsymbol #1}}
+\newcommand{\ssreg}{{\rm SS}_{\rm Reg}}
+\newcommand{\R}{{\mathbf R}}
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\cor}{{\rm cor}}
+\DeclareMathOperator{\cov}{Cov}
+\newtheorem{problem}{Problem}
+
+
+\newenvironment{enumeratei}{\begin{enumerate}[\upshape (i)]}
+                           {\end{enumerate}}
+\newenvironment{enumeratea}{\begin{enumerate}[\upshape (a)]}
+                           {\end{enumerate}}
+\newenvironment{enumeraten}{\begin{enumerate}[\upshape 1.]}
+                           {\end{enumerate}}
+
+\newcommand{\var}{{\rm Var}}
+
+
+
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\begin{center}
+  {\Large Final Exam, Math 463, Spring 2017}
+\end{center}
+
+\medskip
+\noindent
+\textbf{Instructions.  READ CAREFULLY.}:
+\begin{enumeratei}
+\item The work you turn in must be your own.  You may not discuss the
+  final with anyone, either in the class or outside the class. 
+  (You may of course consult with me for any clarification.)
+
+\item The exam is designed to be completed requiring only your course notes.  You may consult written material on R or background material, but you must list any written (or online) source consulted not solely related to R, including specific pages.
+%\item You may consult the textbook and your notes.  
+%  You \emph{may not}
+%  use any other written source. 
+
+\noindent
+\textbf{Failure to follow the above will be considered
+  an instance of academic dishonesty.}
+
+\item Your final must be clearly written and legible.  
+  \textbf{I will not grade problems which are sloppily presented
+    and such problems will receive a grade of $0$}.  
+  If you are unable to write legibly and clearly, 
+  use a word processor.   Use of a word processor is highly 
+  recommended.   Budget time for
+  writing up your solutions.  I will not accept any files created
+  with a camera, e.g.\ mobile device.
+
+\item  \label{It:Expos} Think about your exposition. Your answer is only correct if I can
+  understand what you have done.  Pay attention to
+  style, grammar, and spelling.
+
+\item Include all computer code you have used in a single separate file.
+  \textbf{Do not include the code or unformatted computer output in the main body of your final}.  \textbf{If I have to consult your computer code to determine what you have done, you have not provided sufficient explanation in the text.}
+\item
+\textbf{Late finals will not be accepted}.  
+\item
+\textbf{Include the following statement at top of your
+exam if it is truthful:  ``By submitting this final, I
+certify that I have followed exactly the rules outlined
+on the front of the exam.''}  Exams not containing this
+statement will be given a grade of 0.
+
+\end{enumeratei}
+
+\newpage
+
+
+\begin{center}
+\begin{tabular}{l|l}
+\hline \hline
+Problem & Points  \\
+\hline \hline
+1& 10  \\
+\hline
+2& 10 \\
+\hline
+3& 10 \\
+\hline
+4 & 10 \\
+\hline
+5 & 10 \\
+\hline
+6 & 10 \\
+\hline
+\hline
+TOTAL  & 60 \\
+\hline
+\end{tabular}
+
+\end{center}
+
+\newpage
+
+%{\large Name:} \underline{\hspace{3in}}
+\begin{problem}
+  Consider the data available at
+<<>>=
+ozone = 
+  read.table("http://pages.uoregon.edu/dlevin/DATA/ozo.txt",
+                   header=T)
+@
+  The variables \verb|temp| and \verb|humidity| give daily
+  temperature and humidity readings.  
+  The variable \verb|HO| indicates if ozone levels are high.
+  Use the data to fit a probit model:
+  Here let $Y_i = 1$ if and only if the ozone level is high,
+  and write $\bvec{x}^{(i)} = (1, {\tt temp}_i, {\tt humidity}_i)$.
+  \[
+    \P(Y_i = 1 \mid \bvec{x}^{(i)}) = \Phi( \bvec{x}^{(i)} \bvec{\beta}) \,,
+  \]
+  where $\Phi$ is the normal cdf.
+  Provide the
+  fitted coefficients and their standard errors. (The R function
+  \verb|glm| can be used to fit a probit.  Be sure to specify
+  \verb|family=binomial(link="probit")|.)
+  
+  \begin{enumeratea}
+  \item
+  What is the estimated probability of a high ozone day
+  if the temperature is 95 degrees and the humidity is
+  80\%? 
+  \item 
+  Find a 95\% confidence interval for
+  the linear predictor $\beta_0 + 95\beta_1 + 80\beta_2$
+  at these values.
+  \item Find a 95\%
+  confidence interval for the probability  of high ozone
+  at these values.
+  \end{enumeratea}
+  Note that if \verb|f| is the fitted probit
+  model (using \verb|glm|), then 
+  \verb|summary(f)$cov.unscaled|   
+  gives the approximate covariance matrix 
+  $\cov(\hat{\bvec{\beta}})$.
+  Alternatively, \verb|predict| can give fitted values
+  and their standard errors, for given covariates.
+\end{problem}  
+\newpage
+
+\begin{problem}
+
+This problem concerns the data available at the location
+specified in the R code below:
+
+<<echo=T, fig=T, include=F,label=taxes>>=
+di = read.table("http://pages.uoregon.edu/dlevin/DATA/DI.txt",
+                header=T,row.names=1,sep="\t")
+plot(NDIR~Taxes, data=di, pch=19, cex=0.2)
+text(di$Taxes,di$NDIR,row.names(di), cex=0.4)
+g = lm(NDIR~Taxes, data=di)
+abline(g)
+@
+
+Figure \ref{Fig:Taxes} is a scatterplot of net immigration to states
+against income tax.  (The data is aggregrated over a few years in the early 90's.)
+
+Do people move because of tax rates?  Use the
+data in the file (see above) to discuss this question.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=3in]{final-taxes}
+\caption{Immigration vs.\ taxes. \label{Fig:Taxes}}
+\end{center}
+\end{figure}
+
+\end{problem}
+
+\newpage
+
+\begin{problem}
+Recall that Instrumental Variables Least Squares (IVLS) requires variables $\bvec{Z}$ which
+are independent of the error terms $\bvec{\ep}$. (Such variables are
+called \emph{exogenous}.)  Succesful application
+hinges on this assumption.  Can this be verified from the data?  This
+problem explores this question.
+
+Suppose that
+\begin{equation} \label{Eq:YXE}
+\bvec{Y} = \bvec{Z}\bvec{\alpha} + \bvec{X}\bvec{\beta} + \bvec{\ep} \,.
+\end{equation}
+Assume $\E[\bvec{\ep}] = 0$. 
+Let $\bvec{Z}$ be a random $n$-vector, and suppose
+that $\cov(Z_i,\ep_i) = \rho$.  The triples $(Z_i,X_i,\ep_i)$ are i.i.d.\
+as triples for $i=1,2,\ldots,n$.
+\begin{enumeratea}
+\item
+Show that
+\begin{equation} \label{Eq:Zep}
+n^{-1} \sum_{i=1}^n Z_i \ep_i \to \rho \,.
+\end{equation}
+\item
+Show that if $n$ is large enough, \emph{and you can observe $\bvec{\ep}$},
+you can test $H_0: \rho = 0$ with
+power $0.99$ against the alternative $H_1: |\rho| > 0.001$. 
+
+\emph{Hint}: By the CLT, the test statistic 
+\[
+\sqrt{n}\left( n^{-1} \sum_{i=1}^n Z_i \ep_i - \rho \right)
+\approx N(0,\kappa)
+\]
+where $\kappa = \var(Z_1\ep_1)$.
+
+Thus, with enough data, you can determine with high probability if
+the errors $\bvec{\ep}$ are correlated with $\bvec{Z}$.  (Provided
+you can observe $\bvec{\ep}$.  In most applications, $\bvec{\ep}$ is
+unobservable, however.)
+\item
+Let $\bvec{e}$ be the residuals from the OLS fit
+in \eqref{Eq:YXE}. 
+Find the limit 
+%Since $\bvec{e}$ are estimates of $\bvec{\ep}$
+%is it true that
+\[
+\lim_{n \to \infty} n^{-1} \sum_{i=1}^n Z_i e_i 
+= \lim_{n \to \infty} n^{-1} \langle \bvec{Z}, \bvec{e} \rangle \,.
+\]
+Is it the same as the limit in \eqref{Eq:Zep}?
+\item
+Can you then use the residuals $\bvec{e}$ to determine
+$\cov(Z_1,\ep_1)$?
+\item
+If ``no'' what does this say about the ability to verify
+exogeniety (independence from error term) of instrumental variables?
+\end{enumeratea}
+\end{problem}
+
+\newpage
+
+\begin{problem}
+  Suppose that $(Z_{i,1},Z_{i,2}, \delta_i, \ep_i)$ are IID (as $4$-tuples)
+  jointly normal
+  with mean $0$.    Assume
+  that $(Z_{i,1},Z_{i,2})$ is independent of $(\delta_i, \ep_i)$, 
+  the components of $Z_i$ are independent with variance $1$, and
+  $\var(\ep_i) = \sigma^2$ and $\var(\delta_i) = \tau^2$.
+  Let $\rho = \cor(\delta_i,\ep_i)$.
+  Let 
+  \[
+  X_i = Z_{i,1} + 2Z_{i,2} + \delta_i \,.
+  \]
+  Suppose that
+  \[
+  \bvec{Y} = \bvec{X}\beta  + \bvec{\ep}\,.
+  \]
+  %Suppose that the covariance matrix of $(Z_{i,1},Z_{i,2},X_{i,1},X_{i,2},\ep_i)$ is given by
+  %\[
+  %\Sigma =
+  %\begin{bmatrix}
+  %  1 & 0 & 0.5 & 0.5 & 0 \\
+  %  0 & 1 & 0.5 & 0.5 & 0 \\
+  %  0.5 & 0.5 & 1 & 0.2 & \rho \\
+  %  0.5 & 0.5 & 0.2 & 1 &\rho \\
+  %  0 & 0 & \rho & \rho & \sigma^2
+  %\end{bmatrix}
+  %\]
+  The variables $\bvec{Z}_1, \bvec{Z}_2$ are instruments
+  used to estimate $\beta$.
+  Let $\tilde{\beta}$ denote the IVLS estimator of $\beta$.
+  Let $\hat{\beta}$ denote the OLS estimator of $\beta$.
+  \begin{enumeratea}
+  \item
+    If $n = 10, \beta = 0.5$ and $\sigma = 1 = \tau = 1$, use simulation to estimate the mean-square error  of
+    both $\tilde{\beta}$ and $\hat{\beta}$:
+      \[
+        \sqrt{\E_{\beta}[\|\tilde{\beta} - \beta\|^2]},
+        \quad
+        \sqrt{\E_{\beta}[\|\hat{\beta} - \beta\|^2]}
+      \]
+    Do this for $\rho = 0.8, 0.3, 0$.
+  \item Do the same for $n=10000$.  Repeat both for $\tau = 50$.
+  \item For $n=10$ and $n=10000$: Estimate the standard errors for both estimators.  Which one
+  is larger?  Estimate the bias for both estimators.  Which one is
+  larger?
+  \item Which estimator is better when $n=10$.  When $n= 100$? When $n=100000$?
+  \end{enumeratea}
+  \end{problem} 
+
+\newpage
+
+\begin{problem}
+  Suppose that
+  \[
+    \bvec{Y} = \beta_0 \bvec{1} + \beta_1 \bvec{x} + \bvec{\ep} \,,
+  \]
+  where $\{\ep_i\}$ are uncorrelated, and $\var(\ep_i) = \sigma^2 \times x_i^2$.
+  
+  \begin{enumeratea}
+  \item Is the OLS estimator for $\beta_1$ unbiased?
+  \item Are the standard errors reported for the OLS estimator
+  correct?  (That is, good estimates of the actual standard
+  deviation of the OLS estimator when applied to data generated
+  from this model.)  Give an expression for the standard deviation
+  of the OLS estimators for this model, in terms of $\sigma$
+  and $\bvec{x}$.
+  \item  Write down explicitly the GLS estimator
+  of $\bvec{\beta}$ in terms of $\bvec{Y}$ and $\bvec{x}$.
+  \item Suppose that instead, $\var(\ep_i) = 
+  \sigma^2 a_i$, where $a_i$ is a constant that takes on one of
+  four variables depending on a categorical variable $w_i$.
+  Describe the strategy of the feasible GLS estimator.
+  
+  \item Suppose that $\{X_i\}_{i=1}^n$ are i.i.d.\ $N(0,1)$. 
+  Suppose also that $w_i$ is each equally likely to
+  take on any of its four values.  Assume that the truth is
+  $(a_1,a_2,a_3,a_4) = (1,2,4,8)$.
+  For $n=25$
+  and $n=1000$,  use simulation to estimate the true standard error of the 
+  OLS estimator and the true standard error of the feasible GLS estimator
+  (implement the strategy above.)  Estimate
+  the bias in the reported standard error when using OLS from the
+  true standard error of the OLS estimate (is it zero?).
+  
+  
+  Assume that
+  $Y_i = 3.2 + 2.4x_i + \ep_i$ and $\sigma = 10$.
+\end{enumeratea}
+\end{problem}
+
+
+\newpage
+
+\begin{problem}
+Suppose that
+\[
+\bvec{X}
+=
+\begin{bmatrix}
+1 & 1 & 1 & 1 \\
+1 & 1 & 1 & -1 \\
+1 & 1 & -1 & 1 \\
+1 & 1 & -1 & -1 \\
+1 & -1 & 1 & 1 \\
+1 & -1 & 1 & -1 \\
+1 & -1 & -1 & 1 \\
+1 & -1 & -1 & -1 \\
+\end{bmatrix}
+\]
+Let $\bvec{Y} = \bvec{X}\bvec{\beta} + \bvec{\ep}$.
+Assume the errors are i.i.d.\ $N(0,\sigma^2)$.
+Find $\sigma$  so that the power
+of the $F$-test of 
+\[
+H_0: \beta_3=\beta_4 = 0
+\]
+is $0.95$ against the alternative $\beta_3 = \beta_4 = 0.1$.
+
+Do the same with the matrix
+\[
+\bvec{X}
+=
+\begin{bmatrix}
+ -1.70& -1.45& -0.55& -0.85\\
+ -0.09& -0.01&  0.02&  1.32\\
+ -1.03& -1.27& -1.47&  0.24\\
+ -0.49&  0.39& -1.26& -0.57\\
+ -0.42& -2.25& -0.93&  0.02\\
+  0.45&  0.66&  0.15&  1.41\\
+  0.33 &0.33&  0.92& -0.36\\
+  0.31 &-0.78&  0.72&  0.34\\
+\end{bmatrix}
+\]
+If the answer differs, explain why.
+\end{problem}
+
+\end{document}

@@ -1,0 +1,87 @@
+\documentclass[addpoints]{exam}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\pagestyle{headandfoot}
+	\firstpageheader{Math 462}{Exam 1}{DATE}
+	\firstpageheadrule
+	\firstpagefootrule
+	\firstpagefooter{}{Page \thepage\ of \numpages}{}
+	\runningheadrule
+	\runningheader{Math 462}{Exam 1}{DATE}
+	\runningfootrule
+	\runningfooter{}{Page \thepage\ of \numpages}{}	
+	
+\begin{document}
+	\begin{coverpages}
+		\begin{center}
+			\Large{Math 461 - Fall 2016} \\
+			\Large{Exam 2} \\
+			\Large{21 November, 2016}
+		\end{center}
+		\vspace{0.1in}
+		
+		\begin{center}
+			\makebox[0.5\textwidth]{Name:\enspace\hrulefill}
+			\vspace{0.1in}
+		
+			\makebox[0.5\textwidth]{Student ID:\enspace\hrulefill}	
+			\vspace{0.1in}
+		\end{center}
+		
+		\textbf{Instructions:} Take this exam without cheating. Read the directions to each question carefully. Show \textbf{ALL} of your work in order to receive full credit; you can only receive partial credit if it is clear what your thought process is. Solutions with no work will receive \textbf{NO} credit. Please write solutions in a legible manner, and in complete sentences where appropriate. You may use a pencil, eraser, and your brain to help you complete the solutions. 
+		
+		By signing below, you certify that you have not used any electronic or written assistance in order to complete this exam, and affirm that you are aware of the University of Oregon Student Conduct Code with respect to cheating, and plagiarism.
+		
+		Good Luck!
+		
+		\begin{center}
+			\makebox[0.5\textwidth]{Sign here:\enspace\hrulefill}	
+			\vspace{0.1in}
+		\end{center}
+	
+		\begin{center}
+			\gradetable[v][questions]
+		\end{center}
+		\vspace{0.5in}
+	\end{coverpages}
+	
+	\begin{questions}	
+		\question[5] Suppose that $X_{1}, \dots, X_{n}$ are i.i.d. with pmf $$p_{X}(k;\theta) \begin{cases}
+			\binom{k-1}{r-1}\theta^{r}(1-\theta)^{k-r} & \text{for $k = r, r+1, r+2, \dots$} \\ 0 & o/w
+		\end{cases}$$ Find the MLE of $\theta$
+		\vspace{\stretch{1}}
+			
+		\question[5] Suppose that $X_{1}, \dots, X_{n}$ are i.i.d. $N(\mu, 1)$ random variables. Find the confidence level of the interval $\bar{X} \pm \frac{1}{8}$.
+		\vspace{\stretch{1}}
+		\newpage
+
+		\question[10] Let $X_{1}, \dots, X_{n}$ be i.i.d. with pdf $$f_{X}(x;\theta) \begin{cases}
+			\theta x^{\theta - 1} & \text{for $0 \leq x \leq 1$} \\ 0 & o/w
+		\end{cases}$$ \begin{parts}
+				\part Find a sufficient statistic for $\theta$.
+				\part Find the MLE of $\theta$.
+			\end{parts}
+		\vspace{\stretch{1}}
+		
+		\question[5] Let $X_{1}, \dots, X_{n}$ be i.i.d. $N(\mu, 1)$ random variables. Show that the estimator $\bar{X} = n^{-1}\sum_{i=1}^{n}x_{i}$ has the smallest variance among all unbiased estimators of $\mu$.
+		\vspace{\stretch{1}}
+		\newpage
+			
+		\question[10] Suppose that $X_{1}, \dots, X_{n}$ are i.i.d., each with a Poisson$(\lambda)$ distribution. That is, givent the value $\lambda$, each has the pmf $$p_{X}(k;\lambda) \begin{cases}
+			\frac{\lambda^{k}e^{-\lambda}}{k!} & \text{for $k = 0,1,2, \dots$} \\ 0 & o/w
+		\end{cases}$$ Suppose further that the parameter $\lambda$ is random, and has a Gamma$(s,r)$ prior distribution. That is, it has the pdf $$f_{\Lambda}(\lambda) \begin{cases}
+			\frac{s^{r}}{\Gamma(s)}\lambda^{s-1}e^{-r\lambda} & \text{if $\lambda > 0$} \\ 0 & o/w
+		\end{cases}$$
+			\begin{parts}
+				\part Find the posterior distribution of $\lambda$, given $X_{1}, \dots, X_{n}$.
+				\part Find the Bayes estimator (for squared-error loss) of $\lambda$.
+				\part Show that the Bayes estimator is consistent for $\lambda$.
+			\end{parts}
+		\newpage
+			
+		\question[5] Suppose that $X_{1}, \dots, X_{n}$ are i.i.d., each with $\mathbb{E}(X_{k}) = r/\theta$. The parameter $r$ is known. Show that $$\hat{\theta} = \frac{nr}{\sum_{i=1}^{n}X_{i}}$$ is a consistent sequence of estimators for $\theta$.
+	\end{questions}
+\end{document}

@@ -1,0 +1,455 @@
+\documentclass{amsart}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+	%% Basic Info
+		\author{Alex Thies}
+		\title{Homework 3 \\ Math 463 - Spring 2017}
+		\email{athies@uoregon.edu}
+	%% boilerplate packages
+		\usepackage{amsmath}
+		\usepackage{amssymb}
+		\usepackage{amsthm}
+		\usepackage{enumerate}
+		\usepackage{mathrsfs}
+		\usepackage{color}
+		\usepackage{hyperref}
+	%% rename the abstract
+		\renewcommand{\abstractname}{Introduction}
+	%% graphics stuff
+		\usepackage{graphicx}
+		\graphicspath{{../images/}}
+	%% my shorthand
+		\DeclareMathOperator{\SE}{\text{SE}}
+		\DeclareMathOperator{\Paup}{\text{Paup}}
+		\DeclareMathOperator{\Out}{\text{Out}}
+		\DeclareMathOperator{\Old}{\text{Old}}
+		\DeclareMathOperator{\Pop}{\text{Pop}}
+		\DeclareMathOperator{\Ell}{\mathscr{L}}
+	%% Levin's shorthand
+		\newcommand{\E}{{\mathcal{E}}}
+		\newcommand{\A}{{\mathcal{A}}}
+		\newcommand{\B}{{\mathcal{B}}}
+		\newcommand{\R}{{\mathbb{R}}}
+		\newcommand{\X}{{\mathbf{X}}}
+		\newcommand{\x}{{\mathbf{x}}}
+		\newcommand{\M}{{\mathcal{M}}}
+		\newcommand{\var}{{\rm Var}}
+		\newcommand{\ep}{\varepsilon}
+		\newcommand{\sd}{{\rm SD}}
+		\newcommand{\bvec}[1]{{\boldsymbol #1}}
+		\newcommand{\bbeta}{\bvec{\beta}}
+		\newcommand{\bX}{\bvec{X}}
+		\newcommand{\bY}{\bvec{Y}}
+		\newcommand{\ssreg}{{\rm SS}_{{\rm Reg}}}
+		\newcommand{\ssr}{{\rm SS}_{{\rm Res}}}
+		\newcommand{\sst}{{\rm SS}_{{\rm Tot}}}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+	\begin{abstract}
+		I collaborated with Sienna Allen, Joel Bazzle, Torin Brown, Andy Heeszel, Ashley Ordway, and Seth Temple on this assignment.
+		Due to family and job related time constraints I was unable to complete 4.5.12, 4.5.13, and 4.5.14.
+	\end{abstract}
+
+	\maketitle
+	\section{Problem 1} % (fold)
+	\label{sec:problem_1}
+		\subsection{Assignment} % (fold)
+		\label{sub:assignment1}
+			The goal [of this portion of the assigment] is to understand the relationship of Mortality to the other variables.
+
+			Note that NOx and NOxPot are identical, so exclude one (why?)
+
+			The variables can be divided into demographic and climate variables.
+			Is there significant evidence that the climate variables should be included in modeling mortality?
+			Explain any test that you perform.
+
+			Give a confidence interval for the expected Mortality in Indianapolis.
+			What assumptions are you making to guarantee the confidence level of this interval?
+			Are these assumptions reasonable?
+			Is this interval useful?
+			What is the source of uncertainty, if any, about the mortality rate in Indianapolis?
+
+			Give a confidence interval for the coefficient of NOx.
+			Does the length of this interval depend on which other variables you include in the model?
+			Discuss.
+
+ 			Suppose all variables are included except NOxPot, and you want to test that the coefficients of NOx and Education are both zero.
+ 			Estimate the power of the appropriate test of this hypothesis, when the coefficients are $1$ and $-10$, respectively.
+
+			If the power is low, discuss why.
+		% subsection assignment1 (end)
+
+		\subsection{Report} % (fold)
+		\label{sub:report1}
+			\subsubsection{F-Test on climate variables as a small model} % (fold)
+			\label{ssub:FTestClimate}
+
+
+			Let the climate variables be $\beta_{r+1}, \beta_{r+2}, \dots, \beta_{k}$.
+			We ignore one of NOx and NOxPot because they are linearly dependent, and thus do not belong in the same linear span.
+			Note that we also ignore one of the rows of data\footnote{Fort Worth.} because it contains some \verb|NULL| entries.
+			We test the null hypothesis that $\beta_{r+1} = \beta_{r+2} = \cdots = \beta_{k} = 0$, by perform an F test using the following statistic, and level $\alpha = 0.05$,
+			$$F = \frac{(RSS_{0} - RSS_{1})/(k-r)}{RSS_{1}/(n-k)}$$
+            Note that in order for this test to work, we must have the underlying assumption that the residuals are normally distributed.\footnote{This is true by the Central Limit Theorem.}
+            To carry out this test in $R$, we fit two models \verb|f1| and \verb|f2|, and use \verb|anova| to compute the $F$-statistic; Table \ref{FTest} illustrates our result.
+            We see that $F = 7.53$, which we compare with the critical value $f^{*} = 0.3$.
+            Observe that $0.3 < 7.53$, or that our p-value of $p = \ensuremath{5.97\times 10^{-6}}$ is considerably less than any level $\alpha$, either way we have sufficient evidence to reject the null hypothesis that the climate variables should not be included in the model.
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Mon May  8 17:59:17 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrrr}
+  \hline
+ & Res.Df & RSS & Df & Sum of Sq & F & Pr($>$F) \\ 
+  \hline
+1 & 51 & 118228.93 &  &  &  &  \\ 
+  2 & 44 & 53806.71 & 7 & 64422.21 & 7.53 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\caption{F Test of climate variables} 
+\label{FTest}
+\end{table}
+
+			% subsubsection FTestClimate (end)
+			\subsubsection{Confidence Interval for $Mort_{Indy}$} % (fold)
+			\label{ssub:confidence_interval_for_mortality_in_indianapolis}
+            We compute a confidence interval in \verb|R| for $\mathbb{E}(Y_{\rm Mort_{Indy}})$,
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlstd{CI.indyMort} \hlkwb{<-} \hlkwd{subset}\hlstd{(}\hlkwd{predict}\hlstd{(f1,}\hlkwc{interval} \hlstd{=} \hlstr{'confidence'}\hlstd{),}
+                          \hlkwd{row.names}\hlstd{(}
+                              \hlkwd{predict}\hlstd{(f1,} \hlkwc{interval} \hlstd{=} \hlstr{'confidence'}\hlstd{))}
+                          \hlopt{==} \hlstr{'Indianapolis, IN'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+            Thus, we have the confidence interval $\left( 941.5, 980.57 \right)$.
+            In order to compute this interval we rely on the OLS assumptions, namely that the residuals are centerred about 0, independent from the realized values of $\bX$, and normally distributed.
+            This interval could be used to test whether or not the OLS assumptions are appropriate.
+            We could determine the percentage of actual mortality rates which lie in their respective confidence intervals, with a high percentage indicating that the design matrix is well suited for our experiment, on the other hand a low percentage indicating that the design matrix needs some work because it is not accurately modelling the data.
+            The first thing that we ought to check is whether or not the residuals are actually normally distributed, if they are not, then the critical value which is used to construct the confidence interval would be different.
+            Any uncertainty in the measurements are either a result of statistical noise, or poor choices in variables.
+			% subsubsection confidence_interval_for_mortality_in_indianapolis (end)
+			\subsubsection{Confidence Interval for NOx} % (fold)
+			\label{ssub:confidence_interval_for_nox}
+            We compute a 95\% confidence interval for the coefficient $\beta_{\rm NOx}$ using a $t$-statistic in \verb|R|,
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlstd{alph1} \hlkwb{<-} \hlnum{0.05}
+    \hlstd{NOxtstar1} \hlkwb{<-} \hlkwd{abs}\hlstd{(}\hlkwd{qt}\hlstd{(alph1,}\hlkwd{summary}\hlstd{(f1)}\hlopt{$}\hlstd{df[}\hlnum{2}\hlstd{]))}
+    \hlstd{NOxtstat1} \hlkwb{<-} \hlkwd{subset}\hlstd{(}\hlkwd{summary}\hlstd{(f1)}\hlopt{$}\hlstd{coef,}
+                        \hlkwd{row.names}\hlstd{(}\hlkwd{summary}\hlstd{(f1)}\hlopt{$}\hlstd{coef)} \hlopt{==} \hlstr{'NOx'}\hlstd{)[}\hlnum{1}\hlstd{]}
+    \hlstd{NOxSE1} \hlkwb{<-} \hlkwd{subset}\hlstd{(}\hlkwd{summary}\hlstd{(f1)}\hlopt{$}\hlstd{coef,}
+                     \hlkwd{row.names}\hlstd{(}\hlkwd{summary}\hlstd{(f1)}\hlopt{$}\hlstd{coef)} \hlopt{==} \hlstr{'NOx'}\hlstd{)[}\hlnum{2}\hlstd{]}
+    \hlstd{CI1.NOxlow} \hlkwb{<-} \hlstd{NOxtstat1} \hlopt{-} \hlstd{NOxtstar1}\hlopt{*}\hlstd{NOxSE1}
+    \hlstd{CI1.NOxhigh} \hlkwb{<-} \hlstd{NOxtstat1} \hlopt{+} \hlstd{NOxtstar1}\hlopt{*}\hlstd{NOxSE1}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+            Thus, we have the confidence interval,
+            $$\left( -0.36, 2.71 \right).$$
+
+            If we exclude some variables\footnote{We exclude all non-climate variables, because we already have that model as an object in our R chunks.} we have the following confidence interval for NOx,
+            $$\left( -0.07, 4.02 \right).$$
+            Observe that this CI is about longer that the previous one, and centered about a different $\mu$.
+            In class it was mentioned that the big model is better than the small one because it not only considers the possibilities of the small model, but all others.
+            I suspect that this is the reason why our CI gets larger, that is, the degree of confidence with which we assert that $\beta_{NOx} = \mu$ is less under the small model than the large one.
+			% subsubsection confidence_interval_for_nox (end)
+			\subsubsection{Power test} % (fold)
+			\label{ssub:power_test}
+
+            In order to compute the power of the test of the alternative hypothesis that $\beta_{\rm NOx} = 1$ and $\beta_{\rm Ed} = -10$ at level $\alpha = 0.05$.
+            Note that the values for $\beta_{\rm NOx}$ and $\beta_{\rm Ed}$ are approximately their estimates under the OLS model.
+            We must first compute the non-centrality parameter $\delta$, we do this in \verb|R|,
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlstd{NOxperp} \hlkwb{<-} \hlkwd{residuals}\hlstd{(}\hlkwd{lm}\hlstd{(NOx}\hlopt{~}\hlstd{.}\hlopt{-}\hlstd{Mortality}\hlopt{-}\hlstd{Education,}
+                            \hlkwc{data} \hlstd{= X))}
+    \hlstd{Edperp} \hlkwb{<-} \hlkwd{residuals}\hlstd{(}\hlkwd{lm}\hlstd{(Education}\hlopt{~}\hlstd{.}\hlopt{-}\hlstd{Mortality}\hlopt{-}\hlstd{NOx,}
+                           \hlkwc{data} \hlstd{= X))}
+    \hlstd{de} \hlkwb{<-} \hlstd{((Ed1}\hlopt{^}\hlnum{2}\hlstd{)}\hlopt{*}\hlkwd{sum}\hlstd{(Edperp}\hlopt{^}\hlnum{2}\hlstd{)} \hlopt{+} \hlstd{(NOx1}\hlopt{^}\hlnum{2}\hlstd{)}\hlopt{*}\hlkwd{sum}\hlstd{(NOxperp}\hlopt{^}\hlnum{2}\hlstd{)}
+           \hlopt{+} \hlstd{(}\hlnum{2}\hlopt{*}\hlstd{NOx1}\hlopt{*}\hlstd{Ed1)}\hlopt{*}\hlkwd{sum}\hlstd{(NOxperp}\hlopt{*}\hlstd{Edperp))}\hlopt{/}\hlkwd{summary}\hlstd{(f1)}\hlopt{$}\hlstd{sigma}\hlopt{^}\hlnum{2}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+            Now we can compute the critical value, and power.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+    \hlstd{Fstar2} \hlkwb{<-} \hlkwd{qf}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{alph2,} \hlnum{2}\hlstd{, anova1}\hlopt{$}\hlstd{Res.Df[}\hlnum{2}\hlstd{])}
+    \hlstd{power} \hlkwb{<-} \hlnum{1}\hlopt{-}\hlkwd{pf}\hlstd{(Fstar2,} \hlnum{2}\hlstd{, anova1}\hlopt{$}\hlstd{Res.Df[}\hlnum{2}\hlstd{],} \hlkwc{ncp} \hlstd{= de)}
+    \hlstd{power}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.24
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+            We see that the power is 0.24, which is quite low.
+            Given that we used roughly our estimates under the large OLS model for this test, the low power indicates that we may not be including enough relevant (orthogonal) variables in the model.
+			% subsubsection power_test (end)
+		% subsection report1 (end)
+	% section problem_1 (end)
+
+\section{Book Problems} % (fold)
+	\label{sec:book_problems}
+		\subsection*{Problem 4.5.2} % (fold)
+		\label{ssub:problem_4_5_2}
+		In the OLS regression model, do the residuals always have mean 0?
+		Discuss briefly.
+			\begin{proof}[Solution]
+				True, observe that the standard model $\bY = \bX \hat{\bbeta} + \bvec{\ep}$, thus we can define the errors as $\bvec{\ep} = \bY-\bX \hat{\bbeta}$.
+				Recall that $\hat{\bbeta}=(\bX^{T}\bX)^{-1}\bX^{T}\bY$, after substitution we have $\bvec{\ep} = \bY-\bX(\bX^{T}\bX)^{-1}\bX^{T}\bY$.
+				Let $\bvec{H} = (\bX^{T}\bX)^{-1}\bX^{T}$, so $\bvec{\ep} = \bY- \bvec{H} \bY = (\bvec{I}-\bvec{H})\bY$.
+				Observe that $\bvec{1}^{T}\bvec{\ep} = \sum_{i=0}^{n}{\bvec{\ep}_{i}} = \langle \bvec{1}, (\bvec{I}-\bvec{H})\bY \rangle$.
+				Note that the constant vector is in the linear span of $\bvec{X}$, and that $(I-\bvec{H})\bY$ is in the linear span orthogonal to $\bX$, thus,  $\sum_{i=0}^{n}{\bvec{\ep}} = \langle \bvec{1}, (\bvec{I}-\bvec{H})\bY \rangle =0$. Therefore, $\sum_{i=0}^{n} \bvec{\ep}_{i}/n = 0$, which we aimed to show.
+			\end{proof}
+		% subsubsection problem_4_5_2 (end)
+		\subsection*{Problem 4.5.3} % (fold)
+		\label{sub:problem_4_5_3}
+			True or false, and explain.
+			If, after conditioning on $\bX$, the disturbance terms in a regression equation are correlated with each other across subjects, then
+			\begin{enumerate}[(a)]
+			    \item The OLS estimates are likely to be biased.
+			    \item The estimated standard errors are likely to be biased.
+			\end{enumerate}
+			\begin{proof}[Solution] \
+				\begin{enumerate}[(a)]
+					\item This is false by Theorem 2 on page 43 of the text.
+					\item This is true.
+					Suppose that there is correlation in the residuals, i.e., $y_{i} = x^{T}_{i} + \ep_{i}$ and that $\var(\ep) = s$.
+					The OLS estimates take the form
+						\begin{align*}
+							\hat{\bbeta} &= (\bX^{T}\bX)^{-1}\bX^{T}\bY, \\
+							&= \bbeta + (\bX^{T}\bX)^{-1}\bX^{T}
+						\end{align*}
+					The variance of the estimates is
+						\begin{align*}
+						 	\var(\hat{\bbeta}) &= \mathbb{E}[(\bX^{T}\bX)^{-1}\bX^{T} \bvec{\ep} \bvec{\ep}^{T} \bX(\bX^{T}\bX)^{-1}], \\
+						 	&= (\bX^{T}\bX)^{-1}\bX^{T} \bvec{s}^{T} \bX(\bX^{T}\bX)^{-1}.
+						\end{align*}
+					Because $\bvec{s} \neq \sigma^{2}\bvec{I}$ we see that the standard errors are biased in this case.
+				\end{enumerate}
+			\end{proof}
+
+		% subsection problem_4_5_3 (end)
+		\subsection*{Problem 4.5.5} % (fold)
+		\label{ssub:problem_4_5_5}
+			You are using OLS to fit a regression equation.
+			True or false, and explain:
+			\begin{enumerate}[(a)]
+				\item If you exclude a variable from the equation, but the excluded variable is orthogonal to the other variables in the equation, you won’t bias the estimated coefficients of the remaining variables.
+				\item If you exclude a variable from the equation, and the excluded variable isn’t orthogonal to the other variables, your estimates are going to be biased.
+				\item  If you put an extra variable into the equation, you won't bias the estimated coefficients -- as long as the error term remains independent of the explanatory variables.
+				\item If you put an extra variable into the equation, you are likely to bias the estimated coefficients -- if the error term is dependent on that extra variable.
+			\end{enumerate}
+			\begin{proof}[Solution] \
+				\begin{enumerate}[(a)]
+					\item This is true, and follows from the lecture notes.
+					Let $\bY = \bX \bbeta + \bvec{\ep}$ and $\theta = \bX \bbeta = \mathbb{E}[\bY]$.
+					Suppose that $\bX = [x_{1}, \dots, x_{k}]$ and $V = \Ell{L}[x_{1},\dots, x_{k}]$.
+					Thus, $\mathbb{E}[\bY] \in V$.
+					Additionally, let us suppose that $x_k$ is the orthogonal variable that we decide to exclude.
+					Then, let us call $\theta_1$ be the expectation of the OLS model excluding $x_{k}$ with $V_{0} = \Ell[x_{1}, \dots, x_{k-1}]$ and $\theta_{0}$ be the expectation of the OLS model without excluding $x_{k}$.
+					\begin{align*}
+						\theta &= \theta_{0} + \theta_{1} \\
+						&= (\beta_{1} x_{1} + \dots + \beta_{k-1}x_{k-1} + \beta_{k}x_{k}).
+					\end{align*}
+					Notice that,
+					\begin{align*}
+						\theta_{1} &= \theta - \theta_0, \\
+						&= \theta - \Pi_{v_{0}} \theta,  \\
+						&= (\beta_{1} x_{1} + \dots + \beta_{k-1}x_{k-1} + \beta_{k}x_{k}) \\
+						&\hspace{25pt} -(\beta_1x_1+\dots \beta_{k}x_{k} + \beta_{k} \Pi_{v_{0}} x_{k-1} + \Pi_{v_{0}} x_{k}), \\
+						&= \beta_{k} \Pi_{v_{0}} x_{k-1} + \Pi_{v_0}x_{k}.
+					\end{align*}
+					Because $x_{k}$ is orthogonal to $v_{0}$, then $\theta_{1} = \beta_{k} \Pi_{v_{0}} x_{k-1} = \bX \bbeta$.
+					Thus, if the excluded variable is orthogonal, the estimated coefficients of the remaining variables are not biased.
+					\item This is true and follows directly as a consequence of (a).
+					If $x_{k}$ is not orthogonal to $v_{0}$, then $\theta_{1} = \beta_{k} \Pi_{v_{0}}x_{k-1} + \Pi_{v_{0}}x_{k} \neq \bX \bbeta$.
+					So, $\theta_{1}$ is biased in this case.
+					\item This is true.
+					Because $\ep_{i}$ is I.I.D., the assumptions of the OLS model hold.
+					Thus, the estimated coefficients will not be biased.
+					\item This is true.
+					Because $\ep_{i}$ is not I.I.D. in this case, the assumptions of the OLS model do not hold.
+					So, the estimated coefficients are likely to be biased.
+				\end{enumerate}
+
+			\end{proof}
+		% subsubsection problem_4_5_5 (end)
+		\subsection*{Problem 4.5.9} % (fold)
+		\label{ssub:problem_4_5_9}
+			True, or false, and explain:
+			\begin{enumerate}[(a)]
+				\item Collinearity leads to bias in the OLS estimates.
+				\item Collinearity leads to bias in the estimated standard errors for the OLS estimates.
+				\item Collinearity leads to big standard errors for some estimates.
+			\end{enumerate}
+			\begin{proof}[Solution] \
+				\begin{enumerate}[(a)]
+					\item False, the OLS assumes that the residuals are independent from the realized values of $\bX$, under this assumption the estimates are never biased.
+					\item False, see above.
+					\item True, collinearity between estimates of coefficients makes the design matrix `become more singular.'
+					How I interpret that is that the design matrix is a basis for a linear space, therefore its columns are linearly independent.
+					Collinearity makes the columns \textit{almost} linearly dependent (what I've heard referred to as singular).
+					When this happens the determinant for the matrix approaches zero, diving by this number which is approaching zero makes the standard error blow up, in some cases.
+				\end{enumerate}
+			\end{proof}
+		% subsubsection problem_4_5_9 (end)
+		\subsection*{Problem 4.5.10} % (fold)
+		\label{ssub:problem_4_5_10}
+			Suppose $(X_{i},W_{i},\ep_{i})$ are I.I.D. as triplets across subjects $i = 1,\dots,n$, where $n$ is large; $\mathbb{E}(X_{i}) = \mathbb{E}(W_{i}) = \mathbb{E}(\ep_{i}) = 0$, and $\ep_{i}$ is independent of $(X_{i}, W_{i})$.
+			Happily, $X_{i}$ and $W_{i}$ have positive variance; they are not perfectly correlated.
+			The response variable $Y_{i}$ is in truth this:
+			$$Y_{i} = aX_{i} + bW_{i} + \ep_{i}.$$
+			We can recover $a$ and $b$, up to random error, by running a regression of $Y_{i}$ on $X_{i}$ and $W_{i}$.
+			No intercept is needed.
+			Why not?
+			What happens if $X_{i}$ and $W_{i}$ are perfectly correlated (as random variables)?
+			\begin{proof}[Solution]
+			If $X_{i}$ and $W_{i}$ are not perfectly correlated then let
+			$X_{i} = [x_{1}, \dots, x_{k}]$	and $W_{i} = [w_{i}, \dots, w_{k}]$.
+			Thus, we have the design matrix $\mathbf{A}$,
+			$$\mathbf{A}=
+			\begin{bmatrix}
+			x_{1} & w_{1} \\
+			x_{2} & w_{2} \\
+			\vdots & \vdots \\
+			x_k & w_k \\
+			\end{bmatrix}.$$
+			In this case, the design matrix does not require the constant vector of 1's because the $x_{i}$'s and $w_{i}$'s are independent.
+			Thus, our design matrix has full rank and we can account for all observations.
+			However, if $X_{i}$ and $W_{i}$ are correlated, then $X_{i}$ and $W_{i}$ are linearly dependent, i.e., $X_{i} = [x_{1}, \dots, x_{k}]$ and $W_{i}=[mx_{1}+b,\dots, mx_{k}+b]$.
+			So in the case of linear dependence, we have a new design matrix,
+			$$\mathbf{B}=
+			\begin{bmatrix}
+			x_{1} & a_{1}x_{1}+b_{1} \\
+			x_{2} & a_{2}x_{2}+b_{2} \\
+			\vdots & \vdots \\
+			x_{k} & a_{k}x_{k}+b_{k}\\
+			\end{bmatrix}.$$
+			Observe that $\bvec{B}$ will not have full rank, so it will be impossible to estimate our coefficients because we will have infinitely many solutions.
+			\end{proof}
+		% subsubsection problem_4_5_10 (end)
+		\subsection*{Problem 4.5.11} % (fold)
+		\label{ssub:problem_4_5_11}
+			(This continues question 10.)
+			Tom elects to run a regression of $Y_{i}$ on $X_{i}$, omitting $W_{i}$. He will use the coefficient of $X_{i}$ to estimate $a$.
+			\begin{enumerate}[(a)]
+				\item What happens to Tom if $X_{i}$ and $W_{i}$ are independent?
+				\item What happens to Tom if $X_{i}$ and $W_{i}$ are dependent?
+				Hint: see exercise 3B15.
+			\end{enumerate}
+			\begin{proof}[Solution] \
+				\begin{enumerate}[(a)]
+					\item If $X_{i}$ and $W_{i}$ are independent, then they are almost orthogonal. Thus, the estimated coefficient for $X_{i}$ will not be affected by omitting $W_{i}$, we can regress $Y_{i}$ onto $X_{i}$ and the $\hat{\beta}$
+					\item According to the text the case of dependence leaves $Y$ subject to omitted-variable bias.
+					This is loosely defined as picking up an effect of the omitted variable $W$.
+					Ommitted-variable bias has not been discussed in lecture, so I am unable to expound on it more fully.
+				\end{enumerate}
+			\end{proof}
+		% subsubsection problem_4_5_11 (end)
+		\subsection*{Problem 4.5.12} % (fold)
+		\label{ssub:problem_4_5_12}
+			Suppose $(X_{i},\delta_{i},\ep_{i})$ are I.I.D. as triplets across subjects $i = 1,\dots,n$, where $n$ is large; and $X_{i}$, $\delta_{i}$, $\ep_{i}$ are mutually independent.
+			Furthermore, $\mathbb{E}(X_{i}) = \mathbb{E}(\delta_{i}) = \mathbb{E}(\ep_{i}) = 0$ while $\mathbb{E}(X_{i}^{2}) = \mathbb{E}(\delta_{i}^{2}) = 1$ and $\mathbb{E}(\ep_{i}^{2}) = \sigma^{2} > 0$.
+			The response variable $Y_{i}$ is in truth this: $$Y_{i} = aX_{i} + \ep_{i}.$$
+			We can recover $a$, up to random error, by running a regression of $Y_{i}$ on $X_{i}$.
+			No intercept is needed.
+			Why not?
+			\begin{proof}[Solution]
+			\end{proof}
+		% subsubsection problem_4_5_12 (end)
+		\subsection*{Problem 4.5.13} % (fold)
+		\label{ssub:problem_4_5_13}
+			(Continues question 12.)
+			Let $c$, $d$, $e$ be real numbers and let $W_{i} = cX_{i} + d\delta_{i} + e\ep_{i}$.
+			Dick elects to run a regression of $Y_{i}$ on $X_{i}$ and $W_{i}$, again without an intercept.
+			Dick will use the coefficient of $X_{i}$ in his regression to estimate $a$.
+			If $e = 0$, Dick still gets $a$, up to random error -- as long as $d \neq 0$.
+			Why?
+			And what’s wrong with $d = 0$?
+			\begin{proof}[Solution]
+			\end{proof}
+		% subsubsection problem_4_5_13 (end)
+		\subsection*{Problem 4.5.14} % (fold)
+		\label{ssub:problem_4_5_14}
+			(Continues questions 12 and 13.)
+			Suppose, however, that $e \neq 0$.
+			Then Dick has a problem.
+			To see the problem more clearly, assume that $n$ is large.
+			Let $Q =  X W$  be the design matrix, i.e., the first column is the $X_{i}$ and the second column is the $W_{i}$ .
+			Show that $$Q^{T}Q/n = \begin{pmatrix}
+				\mathbb{E}(X_{i}^{2}) & \mathbb{E}(X_{i}W_{i}) \\
+				\mathbb{E}(X_{i}W_{i}) & \mathbb{E}(W_{i}^{2})
+			\end{pmatrix}, \ \ Q^{T}Y/n = \begin{pmatrix}
+				\mathbb{E}(X_{i}Y_{i}) \\
+				\mathbb{E}(W_{i}Y_{i})
+			\end{pmatrix}$$
+			\begin{enumerate}[(a)]
+				\item Suppose $a = c = d = e = 1$.
+				What will Dick estimate for the coefficient of $X_{i}$ in his regression?
+				\item Suppose $a = c = d = 1$ and $e = -1$.
+				What will Dick estimate for the coefficient of $X_{i}$ in his regression?
+				\item  A textbook on regression advises that, when in doubt, put more explanatory variables into the equation, rather than fewer.
+				What do you think?
+			\end{enumerate}
+			\begin{proof}[Solution]
+			\end{proof}
+		% subsubsection problem_4_5_14 (end)
+	% section book_problems (end)
+\end{document}

@@ -1,0 +1,262 @@
+%!TEX output_directory = temp
+\documentclass{amsart}
+	%% Basic Info
+		\author{Alex Thies}
+		\title{Final Exam \\ Math 463 - Spring 2017}
+		\email{athies@uoregon.edu}
+	%% boilerplate packages
+		\usepackage{amsmath}
+		\usepackage{amssymb}
+		\usepackage{amsthm}
+		\usepackage{enumerate}
+		\usepackage{mathrsfs}
+		\usepackage{color}
+		\usepackage{hyperref}
+	%% rename the abstract
+		\renewcommand{\abstractname}{Introduction}
+	%% my shorthand
+		% sets
+		\DeclareMathOperator{\Z}{\mathbb{Z}}
+		\DeclareMathOperator{\Zp}{\mathbb{Z^{+}}}
+		\DeclareMathOperator{\Zm}{\mathbb{Z^{-}}}
+		\DeclareMathOperator{\N}{\mathbb{Z^{+}}}
+		% linear algebra stuff
+		\DeclareMathOperator{\Ell}{\mathscr{L}}
+		% stats stuff
+		\DeclareMathOperator{\var}{\rm Var}
+		\DeclareMathOperator{\cov}{\rm Cov}
+		\DeclareMathOperator{\sd}{\rm SD}
+		\DeclareMathOperator{\SE}{\rm SE}
+		\DeclareMathOperator{\ind}{\perp\!\!\!\perp}
+		% use pretty characters
+		\DeclareMathOperator{\ep}{\varepsilon}
+		\DeclareMathOperator{\ph}{\varphi}
+	%% Levin's shorthand
+		\newcommand{\E}{{\mathcal{E}}}
+		\newcommand{\A}{{\mathcal{A}}}
+		\newcommand{\B}{{\mathcal{B}}}
+		\newcommand{\R}{{\mathbb{R}}}
+		\newcommand{\X}{{\mathbf{X}}}
+		\newcommand{\x}{{\mathbf{x}}}
+		\newcommand{\M}{{\mathcal{M}}}
+		\newcommand{\bvec}[1]{{\boldsymbol #1}}
+		\newcommand{\bbeta}{\bvec{\beta}}
+		\newcommand{\bX}{\bvec{X}}
+		\newcommand{\bY}{\bvec{Y}}
+		\newcommand{\ssreg}{{\rm SS}_{{\rm Reg}}}
+		\newcommand{\ssr}{{\rm SS}_{{\rm Res}}}
+		\newcommand{\sst}{{\rm SS}_{{\rm Tot}}}
+\begin{document}
+	\maketitle
+
+	\section{Assignment} % (fold)
+	\label{sec:assignment}
+		\subsection{Problem 1} % (fold)
+		\label{sub:problem_1}
+		Consider the data available at
+
+
+		
+		The variables \verb|temp| and \verb|humidity| give daily temperature and humidity readings.  
+		The variable \verb|HO| indicates if ozone levels are high.
+		Use the data to fit a probit model:
+		Here let $Y_i = 1$ if and only if the ozone level is high, and write $\bvec{x}^{(i)} = (1, {\tt temp}_i, {\tt humidity}_i)$.
+		\[
+			\mathbb{P}(Y_i = 1 \mid \bvec{x}^{(i)}) = \Phi( \bvec{x}^{(i)} \bvec{\beta}) \,,
+		  \]
+		where $\Phi$ is the normal cdf.
+		Provide the fitted coefficients and their standard errors. (The R function \verb|glm| can be used to fit a probit. 
+		Be sure to specify \verb|family=binomial(link="probit")|.)  
+		\begin{enumerate}[(a)]
+		\item What is the estimated probability of a high ozone day if the temperature is 95 degrees and the humidity is 80\%? 
+		\item Find a 95\% confidence interval for the linear predictor $\beta_0 + 95\beta_1 + 80\beta_2$ at these values.
+		\item Find a 95\% confidence interval for the probability  of high ozone at these values.
+		\end{enumerate}
+		Note that if \verb|f| is the fitted probit model (using \verb|glm|), then \verb|summary(f)$cov.unscaled| gives the approximate covariance matrix $\cov(\hat{\bvec{\beta}})$.
+		Alternatively, \verb|predict| can give fitted values and their standard errors, for given covariates.
+		\begin{proof}[Solution] \
+			\begin{enumerate}[(a)]
+				\item We compute the following,
+				\item We compute the following,
+				\item We compute the following,
+			\end{enumerate}
+		\end{proof}
+		% subsubsection problem_1 (end)
+
+		\subsection{Problem 2} % (fold)
+		\label{sub:problem_2}
+		This problem concerns the data available at the location specified in the R code below:
+		Figure !!! is a scatterplot of net immigration to states against income tax.
+		(The data is aggregrated over a few years in the early 90's.)
+		Do people move because of tax rates? 
+		Use the data in the file (see above) to discuss this question.
+		\begin{proof}[Solution]
+			Upon inspection of the regression of Taxes onto NDIR illustrated in FIGURE , we observe that there appears to be negative correlation.
+			We WORDS and find that in the large model none of the variables are highly significant, so we have to consider WORDS.
+			Imagine you are an overly taxed New Yorker looking to move, are you more likely to traverse the Continental United States for a lessened tax burden, or over the border say Pennsylvania, or Vermont?
+			Suppose we treat region as a categorical variable. 
+			If we were to find negative correlation among regions, and additionally have high confidence that taxes is a significant factor, then it would be reasonable to assert that people move because of taxes.
+		\end{proof}
+		% subsection problem_2 (end)
+
+		\subsection{Problem 3} % (fold)
+		\label{sub:problem_3}
+		Recall that Instrumental Variables Least Squares (IVLS) requires variables $\bvec{Z}$ which are independent of the error terms $\bvec{\ep}$. 
+		(Such variables are called \emph{exogenous}.) 
+		Succesful application hinges on this assumption.  
+		Can this be verified from the data? 
+		This problem explores this question.
+		Suppose that
+		\begin{equation} \label{Eq:YXE}
+		\bvec{Y} = \bvec{Z}\bvec{\alpha} + \bvec{X}\bvec{\beta} + \bvec{\ep} \,.
+		\end{equation}
+		Assume $\mathbb{E}[\bvec{\ep}] = 0$. 
+		Let $\bvec{Z}$ be a random $n$-vector, and suppose that $\cov(Z_i,\ep_i) = \rho$.  
+		The triples $(Z_i,X_i,\ep_i)$ are i.i.d. as triples for $i=1,2,\ldots,n$.
+		\begin{enumerate}[(a)]
+		\item Show that	\begin{equation} \label{Eq:Zep}	n^{-1} \sum_{i=1}^n Z_i \ep_i \to \rho \,. \end{equation}
+		\item Show that if $n$ is large enough, \emph{and you can observe $\bvec{\ep}$}, you can test $H_0: \rho = 0$ with power $0.99$ against the alternative $H_1: |\rho| > 0.001$. 
+		\emph{Hint}: By the CLT, the test statistic 
+		\[
+		\sqrt{n}\left( n^{-1} \sum_{i=1}^n Z_i \ep_i - \rho \right) \approx N(0,\kappa)
+		\]
+		where $\kappa = \var(Z_1\ep_1)$.
+		Thus, with enough data, you can determine with high probability if the errors $\bvec{\ep}$ are correlated with $\bvec{Z}$. 
+		(Provided you can observe $\bvec{\ep}$. 
+		In most applications, $\bvec{\ep}$ is unobservable, however.)
+		\item Let $\bvec{e}$ be the residuals from the OLS fit in \eqref{Eq:YXE}. 
+		Find the limit 
+		\[
+		\lim_{n \to \infty} n^{-1} \sum_{i=1}^n Z_i e_i = \lim_{n \to \infty} n^{-1} \langle \bvec{Z}, \bvec{e} \rangle \,.
+		\]
+		Is it the same as the limit in \eqref{Eq:Zep}?
+		\item Can you then use the residuals $\bvec{e}$ to determine $\cov(Z_1,\ep_1)$?
+		\item If ``no'' what does this say about the ability to verify exogeniety (independence from error term) of instrumental variables?
+		\end{enumerate}
+		\begin{proof}[Solution] \
+			\begin{enumerate}[(a)]
+				\item From the definition
+				\item 
+				\item 
+				\item 
+				\item 
+			\end{enumerate}
+		\end{proof}
+		% subsection problem_3 (end)
+
+		\subsection{Problem 4} % (fold)
+		\label{sub:problem_4}
+		Suppose that
+		\[
+		\bvec{Y} = \bvec{X}\bvec{\beta} + \bvec{\ep}\,.
+		\]
+		The variables $\bvec{Z}_1, \bvec{Z}_2$ are instruments used to estimate $\bvec{\beta}$.
+		Let $\tilde{\bvec{\beta}}$ denote the IVLS estimator of $\bvec{\beta}$.
+		Let $\hat{\bvec{\beta}}$ denote the OLS estimator of $\bvec{\beta}$.
+		\begin{enumerate}[(a)]
+		\item If $n = 10, \bvec{\beta} = (0.2,0.5)$ and $\sigma = 1$, use simulation to estimate the mean-square error of both $\tilde{\bvec{\beta}}$ and $\hat{\bvec{\beta}}$:
+		\[
+		\sqrt{\E_{\bvec{\beta}}[\|\tilde{\bvec{\beta}} - \bvec{\beta}\|^2]},
+		\quad
+		\sqrt{\E_{\bvec{\beta}}[\|\hat{\bvec{\beta}} - \bvec{\beta}\|^2]}
+		\]
+		Do this for $\rho = 0.8, 0.3, 0$.
+		\item Do the same for $n=10000$.  Repeat both for $\tau = 50$.
+		\item For $n=10$ and $n=10000$: Estimate the standard errors for both estimators.  Which one
+		is larger?  Estimate the bias for both estimators.  Which one is
+		larger?
+		\item Which estimator is better when $n=10$.  When $n= 100$? When $n=100000$?
+		\end{enumerate}
+		\begin{proof}[Solution] \
+			\begin{enumerate}[(a)]
+				\item 
+				\item 
+				\item 
+				\item 
+			\end{enumerate}
+		\end{proof}
+		% subsection problem_4 (end)
+
+		\subsection{Problem 5} % (fold)
+		\label{sub:problem_5}
+		Suppose that
+		\[
+		\bvec{Y} = \beta_0 \bvec{1} + \beta_1 \bvec{x} + \bvec{\ep} \,,
+		\]
+		where $\{\ep_i\}$ are uncorrelated, and $\var(\ep_i | x_{i}) = \sigma^{2} \times x_{i}^{2}$.
+		\begin{enumerate}[(a)]
+		\item Is the OLS estimator for $\beta_1$ unbiased?
+		\item Are the standard errors reported for the OLS estimator correct? (That is, good estimates of the actual standard deviation of the OLS estimator when applied to data generated from this model.)  
+		Give an expression for the standard deviation of the OLS estimators for this model, in terms of $\sigma$ and $\bvec{x}$.
+		\item  Write down explicitly the GLS estimator of $\bvec{\beta}$ in terms of $\bvec{Y}$ and $\bvec{x}$.
+		\item Suppose that instead, $\var(\ep_i) = \sigma^2 a_i$, where $a_i$ is a constant that takes on one of four variables depending on a categorical variable $w_i$.
+		Describe the strategy of the feasible GLS estimator.
+		\item Suppose that $\{X_i\}_{i=1}^n$ are i.i.d.\ $N(0,1)$. 
+		Suppose also that $w_i$ is each equally likely to take on any of its four values.  
+		Assume that the truth is $(a_1,a_2,a_3,a_4) = (1,2,4,8)$.
+		For $n=25$ and $n=1000$, use simulation to estimate the true standard error of the OLS estimator and the true standard error of the feasible GLS estimator (implement the strategy above.)  
+		Estimate the bias in the reported standard error when using OLS from the true standard error of the OLS estimate (is it zero?).
+		Assume that $Y_i = 3.2 + 2.4x_i + \ep_i$ and $\sigma = 10$.
+		\end{enumerate}
+		\begin{proof}[Solution] \
+			\begin{enumerate}[(a)]
+				\item No, in order for the OLS estimator for any $\beta$ to be unbiased we must assume that $\bvec{\ep}_{i}$ are I.I.D., we do not make that assumption in this case.
+				\item No, we proceed with the definition of $\var(\hat{\beta}|x)$,
+					\begin{align*}
+						\var(\hat{\beta}|x) &= \var\left[ \left( X'X \right)^{-1} X'Y | X \right], \\
+						&= \left( X'X \right)^{-1}X' \var\left[Y|x\right]\left[\left( X'X \right)^{-1}X'\right]', \\
+						&= \left( X'X \right)^{-1}X' \sigma^{2} X^{2} \left[ X(X'X)^{-1} \right], \\
+						&= \sigma^{2} \left( X'X \right)^{-1} X'X \cdot X\left[ X\left( X'X \right)^{-1} \right], \\
+						&= \sigma^{2}X^{2}\left( X'X \right)^{-1}.
+					\end{align*}
+				Thus the standard deviation in terms of $\sigma$ and $x$ is $\sd(\hat{\beta} | x ) = \sigma X \sqrt{\left( X'X \right)^{-1}}$, which is not $\sigma^{2}\bvec{I}_{n\times n}$.
+				\item Same as 4, read slide on GLS
+				\item Read the books
+				\item 
+			\end{enumerate}
+		\end{proof}
+		% subsection problem_5 (end)
+
+		\subsection{Problem 6} % (fold)
+		\label{sub:problem_6}
+		Suppose that
+		\[
+		\bvec{X} =
+		\begin{bmatrix}
+		1 & 1 & 1 & 1 \\
+		1 & 1 & 1 & -1 \\
+		1 & 1 & -1 & 1 \\
+		1 & 1 & -1 & -1 \\
+		1 & -1 & 1 & 1 \\
+		1 & -1 & 1 & -1 \\
+		1 & -1 & -1 & 1 \\
+		1 & -1 & -1 & -1 \\
+		\end{bmatrix}
+		\]
+		Let $\bvec{Y} = \bvec{X}\bvec{\beta} + \bvec{\ep}$.
+		Assume the errors are i.i.d.\ $N(0,\sigma^2)$.
+		Find $\sigma$  so that the power of the $F$-test of 
+		\[
+		H_0: \beta_3=\beta_4 = 0
+		\]
+		is $0.95$ against the alternative $\beta_3 = \beta_4 = 0.1$.
+		Do the same with the matrix
+		\[
+		\bvec{X} =
+		\begin{bmatrix}
+		-1.70& -1.45& -0.55& -0.85\\
+		-0.09& -0.01&  0.02&  1.32\\
+		-1.03& -1.27& -1.47&  0.24\\
+		-0.49&  0.39& -1.26& -0.57\\
+		-0.42& -2.25& -0.93&  0.02\\
+		0.45&  0.66&  0.15&  1.41\\
+		0.33 &0.33&  0.92& -0.36\\
+		0.31 &-0.78&  0.72&  0.34\\
+		\end{bmatrix}
+		\]
+		If the answer differs, explain why.
+		\begin{proof}[Solution]
+		\end{proof}
+		% subsection problem_6 (end)
+	% section assignment (end)
+\end{document}
